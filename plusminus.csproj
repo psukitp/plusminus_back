@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <Folder Include="Dtos\User\" />
-    <Folder Include="Dtos\Incomes\" />
     <Folder Include="Dtos\CategoryExpenses\" />
     <Folder Include="Dtos\CategoryIncomes\" />
   </ItemGroup>

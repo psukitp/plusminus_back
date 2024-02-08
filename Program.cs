@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using plusminus.Data;
 using plusminus.Services.ExpensesService;
+using plusminus.Services.IncomesService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IExpensesService, ExpensesService>();
+builder.Services.AddScoped<IIncomesService, IncomesService>();
 
 var app = builder.Build();
 
