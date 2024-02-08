@@ -14,25 +14,25 @@ namespace plusminus.Controllers
             _expensesService = expensesService;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("expanses/{id}")]
         public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> GetExpanses(int id)
         {
             return Ok(await _expensesService.GetExpensesByUserId(id));
         }
 
-        [HttpPost]
+        [HttpPost("expanses/add")]
         public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> AddExpenses(AddExpensesDto newExpenses)
         {
             return Ok(await _expensesService.AddExpenses(newExpenses));
         }
 
-        [HttpPatch]
+        [HttpPatch("expanses/update")]
         public async Task<ActionResult<ServiceResponse<GetExpensesDto>>> UpdateExpenses(UpdateExpensesDto newExpenses)
         {
             return Ok(await _expensesService.UpdateExpenses(newExpenses));
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("expanses/{id}")]
         public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> DeleteExpenses(int id)
         {
             return Ok(await _expensesService.DeleteExpensesById(id));
