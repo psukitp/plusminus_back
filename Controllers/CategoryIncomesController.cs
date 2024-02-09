@@ -5,6 +5,8 @@ using plusminus.Services.CategoryIncomesService;
 
 namespace plusminus.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class CategoryIncomesController: ControllerBase
     {
         private readonly ICategoryIncomesService _categoryIncomesService;
@@ -15,21 +17,13 @@ namespace plusminus.Controllers
         }
 
         [HttpPost("category/incomes/add")]
-        public async Task<ActionResult<ServiceResponse<List<GetCategoryIncomesDto>>>> AddCategoryIncomes(AddCategoryIncomesDto newCategoryIncomes)
-        {
-            return Ok(await _categoryIncomesService.AddCategoryIncomes(newCategoryIncomes));
-        }
+        public async Task<ActionResult<ServiceResponse<List<GetCategoryIncomesDto>>>> AddCategoryIncomes(AddCategoryIncomesDto newCategoryIncomes) => Ok(await _categoryIncomesService.AddCategoryIncomes(newCategoryIncomes));
+        
 
         [HttpPatch("category/incomes/update")]
-        public async Task<ActionResult<ServiceResponse<GetCategoryIncomesDto>>> UpdateCategoryIncomes(UpdateCategoryIncomesDto updatedCategoryIncomes)
-        {
-            return Ok(await _categoryIncomesService.UpdateCategoryIncomes(updatedCategoryIncomes));
-        }
+        public async Task<ActionResult<ServiceResponse<GetCategoryIncomesDto>>> UpdateCategoryIncomes(UpdateCategoryIncomesDto updatedCategoryIncomes) => Ok(await _categoryIncomesService.UpdateCategoryIncomes(updatedCategoryIncomes));
 
         [HttpDelete("category/incomes/{id}")]
-        public async Task<ActionResult<ServiceResponse<List<GetCategoryIncomesDto>>>> DeleteCategoryIncomes(int id)
-        {
-            return Ok(await _categoryIncomesService.DeleteCategoryIncomesById(id));
-        }
+        public async Task<ActionResult<ServiceResponse<List<GetCategoryIncomesDto>>>> DeleteCategoryIncomes(int id) => Ok(await _categoryIncomesService.DeleteCategoryIncomesById(id));
     }
 }
