@@ -7,7 +7,7 @@ namespace plusminus.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CategoryIncomesController: ControllerBase
+    public class CategoryIncomesController : ControllerBase
     {
         private readonly ICategoryIncomesService _categoryIncomesService;
 

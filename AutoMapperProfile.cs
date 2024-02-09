@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using plusminus.Dtos.CategoryExpenses;
 using plusminus.Dtos.CategoryIncomes;
 using plusminus.Dtos.Expenses;
 using plusminus.Dtos.Incomes;
@@ -21,6 +22,10 @@ namespace plusminus
             CreateMap<CategoryIncomes, GetCategoryIncomesDto>();
             CreateMap<AddCategoryIncomesDto, CategoryIncomes>();
             CreateMap<UpdateCategoryIncomesDto, CategoryIncomes>();
+
+            CreateMap<CategoryExpenses, GetCategoryExpansesDto>();
+            CreateMap<AddCategoryExpansesDto, CategoryExpenses>();
+            CreateMap<UpdateCategoryExpansesDto, CategoryExpenses>();
         }
     }
 }

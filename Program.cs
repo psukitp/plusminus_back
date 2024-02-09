@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using plusminus.Data;
+using plusminus.Services.CategoryExpansesService;
 using plusminus.Services.CategoryIncomesService;
 using plusminus.Services.ExpensesService;
 using plusminus.Services.IncomesService;
@@ -17,6 +18,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IExpensesService, ExpensesService>();
 builder.Services.AddScoped<IIncomesService, IncomesService>();
 builder.Services.AddScoped<ICategoryIncomesService, CategoryIncomesService>();
+builder.Services.AddScoped<ICategoryExpansesService, CategoryExpansesService>();
 
 var app = builder.Build();
 

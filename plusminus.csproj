@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <Folder Include="Dtos\User\" />
-    <Folder Include="Dtos\CategoryExpenses\" />
   </ItemGroup>
 
 </Project>
