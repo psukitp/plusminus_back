@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "7+3FRqIQiboBljiUrjxOmYE94TLtGglppu2BTMnuoBBc1n/KHy7fr+ssR3zNvqoFsPtnc+aQgtSBWLCtV9z3uw==",
+  "dgSpecHash": "JFYQVLvcYKopyuHYtm73GqtEBBZkkuKbJFDeuFSpA7Nv9D0jukQovETfTmLdHVVm6CldYlsIfIhMqS5isbmllA==",
   "success": true,
-  "projectFilePath": "D:\\plusminus\\plusminus_back\\plusminus\\plusminus.csproj",
+  "projectFilePath": "D:\\projects\\pet\\plusminus_back\\plusminus.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\t1ny_\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\t1ny_\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",

@@ -1592,11 +1592,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\plusminus\\plusminus_back\\plusminus\\plusminus.csproj",
+      "projectUniqueName": "D:\\projects\\pet\\plusminus_back\\plusminus.csproj",
       "projectName": "plusminus",
-      "projectPath": "D:\\plusminus\\plusminus_back\\plusminus\\plusminus.csproj",
+      "projectPath": "D:\\projects\\pet\\plusminus_back\\plusminus.csproj",
       "packagesPath": "C:\\Users\\t1ny_\\.nuget\\packages\\",
-      "outputPath": "D:\\plusminus\\plusminus_back\\plusminus\\obj\\",
+      "outputPath": "D:\\projects\\pet\\plusminus_back\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\t1ny_\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -1619,6 +1619,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -1679,7 +1684,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200\\RuntimeIdentifierGraph.json"
       }
     }
   }
