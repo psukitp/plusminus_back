@@ -7,5 +7,7 @@
         public DateTime Date{ get; set; }
         public int CategoryId { get; set; }
         public int Amount { get; set; }
+        virtual public CategoryExpenses Category { get; set; } = null!;
+        virtual public User User{ get; set; } = null!;
     }
 }

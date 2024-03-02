@@ -9,5 +9,6 @@
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
+        virtual public ICollection<Expenses> Expenses { get; set; } = null!;
     }
 }

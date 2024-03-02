@@ -11,7 +11,7 @@ namespace plusminus
     {
         public AutoMapperProfile()
         {
-            CreateMap<Expenses, GetExpensesDto>();
+            CreateMap<Expenses, GetExpensesDto>().ForMember("CategoryName", cn => cn.MapFrom(e => e.Category.Name));
             CreateMap<AddExpensesDto, Expenses>();
             CreateMap<UpdateExpensesDto, Expenses>();
 
