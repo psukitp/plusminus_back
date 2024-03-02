@@ -56,7 +56,7 @@ namespace plusminus.Services.ExpensesService
 
             try
             {
-                var expenses = await _context.Expenses.ToListAsync();
+                var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
                 var dbExpenses = expenses.Where(e => e.UserId == id);
                 serviceResponse.Data = dbExpenses.Select(e => _mapper.Map<GetExpensesDto>(e)).ToList();
             } catch (Exception ex)
