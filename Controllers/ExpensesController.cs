@@ -28,5 +28,8 @@ namespace plusminus.Controllers
 
         [HttpDelete("expanses/{id}")]
         public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> DeleteExpenses(int id) => Ok(await _expensesService.DeleteExpensesById(id));
+
+        [HttpGet("expanses/bycategory/{id}")]
+        public async Task<ActionResult<ServiceResponse<List<ExpensesByCategory>>>> GetExpensesByCategory(int id) => Ok(await _expensesService.GetExpansesByCategory(id));
     }
 }
