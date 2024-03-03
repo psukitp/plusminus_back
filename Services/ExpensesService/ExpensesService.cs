@@ -68,6 +68,50 @@ namespace plusminus.Services.ExpensesService
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<List<ExpensesByCategory>>> GetExpansesByCategory(int userId)
+        {
+            var serviceResponse = new ServiceResponse<List<ExpensesByCategory>>();
+            try
+            {
+                var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
+
+                var dbExpenses = expenses
+                    .Where(e => e.UserId == userId)
+                    .GroupBy(e => e.CategoryId)
+                    .Select(g => new
+                    {
+                        categoryId = g.Key,
+                        amount = g.Sum(e => e.Amount)
+                    })
+                    .ToList();
+
+                var result = new List<ExpensesByCategory>();
+                foreach (var expense in dbExpenses)
+                {
+                    var category = await _context.CategoryExpenses.FirstOrDefaultAsync(c => c.Id == expense.categoryId);
+                    if (category != null)
+                    {
+                        result.Add(new ExpensesByCategory
+                        {
+                            CategoryName = category.Name,
+                            Color = category.Color,
+                            Amount = expense.amount
+                        });
+                    }
+                }
+
+                serviceResponse.Data = result;
+
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
         public async Task<ServiceResponse<GetExpensesDto>> UpdateExpenses(UpdateExpensesDto newExpenses)
         {
             var serviceResponse = new ServiceResponse<GetExpensesDto>();
@@ -91,5 +135,6 @@ namespace plusminus.Services.ExpensesService
 
             return serviceResponse;
         }
+
     }
 }

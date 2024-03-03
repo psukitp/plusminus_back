@@ -9,5 +9,7 @@ namespace plusminus.Services.ExpensesService
         Task<ServiceResponse<List<GetExpensesDto>>> AddExpenses(AddExpensesDto newExpenses);
         Task<ServiceResponse<GetExpensesDto>> UpdateExpenses(UpdateExpensesDto newExpenses);
         Task<ServiceResponse<List<GetExpensesDto>>> DeleteExpensesById(int id);
+        Task<ServiceResponse<List<ExpensesByCategory>>> GetExpansesByCategory(int id);
+        
     }
 }
