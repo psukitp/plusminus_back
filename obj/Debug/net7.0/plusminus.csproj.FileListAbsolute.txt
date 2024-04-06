@@ -106,3 +106,9 @@ D:\projects\pet\plusminus_back\bin\Debug\net7.0\NSwag.Generation.dll
 D:\projects\pet\plusminus_back\bin\Debug\net7.0\NSwag.Generation.AspNetCore.dll
 D:\projects\pet\plusminus_back\bin\Debug\net7.0\Swashbuckle.AspNetCore.Annotations.dll
 D:\projects\pet\plusminus_back\bin\Debug\net7.0\YamlDotNet.dll
+D:\projects\pet\plusminus_back\bin\Debug\net7.0\BCrypt.Net-Next.dll
+D:\projects\pet\plusminus_back\bin\Debug\net7.0\Microsoft.IdentityModel.Abstractions.dll
+D:\projects\pet\plusminus_back\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\projects\pet\plusminus_back\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+D:\projects\pet\plusminus_back\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+D:\projects\pet\plusminus_back\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll

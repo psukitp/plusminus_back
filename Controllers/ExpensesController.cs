@@ -1,7 +1,11 @@
-﻿ using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using plusminus.Dtos.Expenses;
+using plusminus.Helpers;
 using plusminus.Models;
 using plusminus.Services.ExpensesService;
+using System.Security.Claims;
 
 namespace plusminus.Controllers
 {
@@ -16,8 +20,22 @@ namespace plusminus.Controllers
             _expensesService = expensesService;
         }
 
-        [HttpGet("expanses/{id}")]
-        public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> GetExpanses(int id) => Ok(await _expensesService.GetExpensesByUserId(id));
+        [HttpGet("expanses")]
+        public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> GetExpanses()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
+            {
+                return BadRequest("Неверный идентификатор пользователя.");
+            }
+
+            return Ok(await _expensesService.GetExpensesByUserId(userId));
+        }
 
         [HttpPost("expanses/add")]
         public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> AddExpenses(AddExpensesDto newExpenses) => Ok(await _expensesService.AddExpenses(newExpenses));
@@ -29,7 +47,22 @@ namespace plusminus.Controllers
         [HttpDelete("expanses/{id}")]
         public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> DeleteExpenses(int id) => Ok(await _expensesService.DeleteExpensesById(id));
 
-        [HttpGet("expanses/bycategory/{id}")]
-        public async Task<ActionResult<ServiceResponse<List<ExpensesByCategory>>>> GetExpensesByCategory(int id) => Ok(await _expensesService.GetExpansesByCategory(id));
+        [HttpGet("expanses/bycategory")]
+        public async Task<ActionResult<ServiceResponse<List<ExpensesByCategory>>>> GetExpensesByCategory()
+        {
+
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
+            {
+                return BadRequest("Неверный идентификатор пользователя.");
+            }
+
+            return Ok(await _expensesService.GetExpansesByCategory(userId));
+        }
     }
 }
