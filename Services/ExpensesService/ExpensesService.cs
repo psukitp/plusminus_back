@@ -17,15 +17,46 @@ namespace plusminus.Services.ExpensesService
             _context = context;
         }
 
-        public async Task<ServiceResponse<List<GetExpensesDto>>> AddExpenses(AddExpensesDto newExpenses)
+        public async Task<ServiceResponse<List<GetExpensesDto>>> GetExpensesByUserId(int id)
         {
             var serviceResponse = new ServiceResponse<List<GetExpensesDto>>();
 
-            var expenses = _mapper.Map<Expenses>(newExpenses);
-            var addedExpenses = await _context.Expenses.AddAsync(expenses);
+            try
+            {
+                var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
+                var dbExpenses = expenses.Where(e => e.UserId == id);
+                serviceResponse.Data = dbExpenses.Select(e => _mapper.Map<GetExpensesDto>(e)).ToList();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<List<GetExpensesDto>>> AddExpenses(AddExpensesDto newExpenses, int userId)
+        {
+            var serviceResponse = new ServiceResponse<List<GetExpensesDto>>();
+
+            Expenses mappedExpenses = _mapper.Map<Expenses>(newExpenses);
+
+            Expenses expensesToAdd = new Expenses
+            {
+                Amount = mappedExpenses.Amount,
+                Category = mappedExpenses.Category,
+                UserId = userId,
+                Date = mappedExpenses.Date,
+                CategoryId = mappedExpenses.CategoryId,
+                Id = mappedExpenses.Id,
+                User = mappedExpenses.User,
+            };
+            var addedExpenses = await _context.Expenses.AddAsync(expensesToAdd);
             await _context.SaveChangesAsync();
-            
-            var dbExpenses = await _context.Expenses.ToListAsync();
+
+            var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
+            var dbExpenses = expenses.Where(e => e.UserId == userId);
             serviceResponse.Data = dbExpenses.Select(e => _mapper.Map<GetExpensesDto>(e)).ToList();
             
             return serviceResponse;
@@ -41,24 +72,6 @@ namespace plusminus.Services.ExpensesService
 
                 _context.Expenses.Remove(expenses);
                 await _context.SaveChangesAsync();
-            } catch (Exception ex)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
-            }
-
-            return serviceResponse;
-        }
-
-        public async Task<ServiceResponse<List<GetExpensesDto>>> GetExpensesByUserId(int id)
-        {
-            var serviceResponse = new ServiceResponse<List<GetExpensesDto>>();
-
-            try
-            {
-                var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
-                var dbExpenses = expenses.Where(e => e.UserId == id);
-                serviceResponse.Data = dbExpenses.Select(e => _mapper.Map<GetExpensesDto>(e)).ToList();
             } catch (Exception ex)
             {
                 serviceResponse.Success = false;
