@@ -38,7 +38,26 @@ namespace plusminus.Controllers
         }
 
         [HttpPost("expanses/add")]
-        public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> AddExpenses(AddExpensesDto newExpenses) => Ok(await _expensesService.AddExpenses(newExpenses));
+        public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> AddExpenses(AddExpensesDto newExpenses) {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
+            {
+                return BadRequest("Неверный идентификатор пользователя.");
+            }
+            var newExpense = new AddExpensesDto
+            {
+                Amount = newExpenses.Amount,
+                CategoryId = newExpenses.CategoryId,
+                Date = newExpenses.Date,
+            };
+
+            return Ok(await _expensesService.AddExpenses(newExpense, userId));
+        }
         
 
         [HttpPatch("expanses/update")]

@@ -8,6 +8,7 @@ namespace plusminus.Helpers
 {
     public class JWTHelper
     {
+        //TODO ну пусть останется, вдруг пригодится. 
         static private readonly string _key = "00112233445566778899aabbccddeeff";
 
         static public (string accessToken, string refreshToken) GenerateJwtTokens(User user)
