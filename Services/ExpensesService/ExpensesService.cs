@@ -17,14 +17,14 @@ namespace plusminus.Services.ExpensesService
             _context = context;
         }
 
-        public async Task<ServiceResponse<List<GetExpensesDto>>> GetExpensesByUserId(int id)
+        public async Task<ServiceResponse<List<GetExpensesDto>>> GetExpensesByUserId(int id, DateOnly date)
         {
             var serviceResponse = new ServiceResponse<List<GetExpensesDto>>();
 
             try
             {
                 var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
-                var dbExpenses = expenses.Where(e => e.UserId == id);
+                var dbExpenses = expenses.Where(e => e.UserId == id && e.Date == date);
                 serviceResponse.Data = dbExpenses.Select(e => _mapper.Map<GetExpensesDto>(e)).ToList();
             }
             catch (Exception ex)
@@ -56,7 +56,7 @@ namespace plusminus.Services.ExpensesService
             await _context.SaveChangesAsync();
 
             var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
-            var dbExpenses = expenses.Where(e => e.UserId == userId);
+            var dbExpenses = expenses.Where(e => e.UserId == userId && e.Date == expensesToAdd.Date);
             serviceResponse.Data = dbExpenses.Select(e => _mapper.Map<GetExpensesDto>(e)).ToList();
             
             return serviceResponse;

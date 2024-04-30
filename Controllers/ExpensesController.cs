@@ -5,7 +5,9 @@ using plusminus.Dtos.Expenses;
 using plusminus.Helpers;
 using plusminus.Models;
 using plusminus.Services.ExpensesService;
+using System.Globalization;
 using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace plusminus.Controllers
 {
@@ -21,8 +23,12 @@ namespace plusminus.Controllers
         }
 
         [HttpGet("expanses")]
-        public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> GetExpanses()
+        public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> GetExpanses([FromQuery] string date)
         {
+            if (!DateOnly.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedDate))
+            {
+                return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
+            }
             var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             if (!authenticateResult.Succeeded)
             {
@@ -34,7 +40,7 @@ namespace plusminus.Controllers
                 return BadRequest("Неверный идентификатор пользователя.");
             }
 
-            return Ok(await _expensesService.GetExpensesByUserId(userId));
+            return Ok(await _expensesService.GetExpensesByUserId(userId, parsedDate));
         }
 
         [HttpPost("expanses/add")]
