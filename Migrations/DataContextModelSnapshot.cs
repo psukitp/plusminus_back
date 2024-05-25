@@ -38,7 +38,12 @@ namespace plusminus.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("userId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("userId");
 
                     b.ToTable("CategoryExpenses");
                 });
@@ -153,6 +158,17 @@ namespace plusminus.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("plusminus.Models.CategoryExpenses", b =>
+                {
+                    b.HasOne("plusminus.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("plusminus.Models.Expenses", b =>
