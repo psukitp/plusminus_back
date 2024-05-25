@@ -81,7 +81,7 @@ namespace plusminus.Services.ExpensesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<ExpensesByCategory>>> GetExpansesByCategory(int userId)
+        public async Task<ServiceResponse<List<ExpensesByCategory>>> GetExpansesByCategory(int userId, DateOnly date)
         {
             var serviceResponse = new ServiceResponse<List<ExpensesByCategory>>();
             try
@@ -89,7 +89,7 @@ namespace plusminus.Services.ExpensesService
                 var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
 
                 var dbExpenses = expenses
-                    .Where(e => e.UserId == userId)
+                    .Where(e => e.UserId == userId && e.Date.Month == date.Month && e.Date.Year == e.Date.Year)
                     .GroupBy(e => e.CategoryId)
                     .Select(g => new
                     {

@@ -80,5 +80,22 @@ namespace plusminus.Services.CategoryExpansesService
             }
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<List<GetCategoryExpansesDto>>> GetAllCategories(int userId)
+        {
+            var serviceResponse = new ServiceResponse<List<GetCategoryExpansesDto>>();
+            try
+            {
+                var dbCategoryExpanses = await _context.CategoryExpenses.ToListAsync();
+                var categories = dbCategoryExpanses.Where(c => c.userId == userId).ToList();
+                serviceResponse.Data = categories.Select(ci => _mapper.Map<CategoryExpenses, GetCategoryExpansesDto>(ci)).ToList();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+            return serviceResponse;
+        }
     }
 }

@@ -8,5 +8,6 @@ namespace plusminus.Services.CategoryExpansesService
         Task<ServiceResponse<List<GetCategoryExpansesDto>>> AddCategoryExpanses(AddCategoryExpansesDto newCategoryExpanses);
         Task<ServiceResponse<GetCategoryExpansesDto>> UpdateCategoryExpanses(UpdateCategoryExpansesDto updatedCategoryExpanses);
         Task<ServiceResponse<List<GetCategoryExpansesDto>>> DeleteCategoryExpansesById(int id);
+        Task<ServiceResponse<List<GetCategoryExpansesDto>>> GetAllCategories(int userId);
     }
 }
