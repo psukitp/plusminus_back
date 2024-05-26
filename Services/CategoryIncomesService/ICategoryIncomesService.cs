@@ -8,5 +8,6 @@ namespace plusminus.Services.CategoryIncomesService
         Task<ServiceResponse<List<GetCategoryIncomesDto>>> AddCategoryIncomes(AddCategoryIncomesDto newCategoryIncomes);
         Task<ServiceResponse<GetCategoryIncomesDto>> UpdateCategoryIncomes(UpdateCategoryIncomesDto updatedCategoryIncomes);
         Task<ServiceResponse<List<GetCategoryIncomesDto>>> DeleteCategoryIncomesById(int id);
+        Task<ServiceResponse<List<GetCategoryIncomesDto>>> GetAllIncomes(int userId);
     }
 }

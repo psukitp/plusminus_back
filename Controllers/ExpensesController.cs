@@ -90,5 +90,22 @@ namespace plusminus.Controllers
 
             return Ok(await _expensesService.GetExpansesByCategory(userId, parsedDate));
         }
+
+        [HttpGet("expanses/sum")]
+        public async Task<ActionResult<ServiceResponse<Double>>> GetExpensesSum()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
+            {
+                return BadRequest("Неверный идентификатор пользователя.");
+            }
+
+            return Ok(await _expensesService.GetExpensesSum(userId));
+        }
     }
 }

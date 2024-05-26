@@ -80,5 +80,23 @@ namespace plusminus.Services.CategoryIncomesService
             }
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<List<GetCategoryIncomesDto>>> GetAllIncomes(int userId)
+        {
+            var serviceResponse = new ServiceResponse<List<GetCategoryIncomesDto>>();
+            try
+            {
+                var dbCategories = await _context.CategoryIncomes.Where(c => c.UserId == userId).ToListAsync();
+                serviceResponse.Data =
+                    dbCategories.Select(_mapper.Map<CategoryIncomes, GetCategoryIncomesDto>).ToList();
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
     }
 }
