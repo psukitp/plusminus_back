@@ -11,11 +11,15 @@ namespace plusminus
     {
         public AutoMapperProfile()
         {
-            CreateMap<Expenses, GetExpensesDto>().ForMember("CategoryName", cn => cn.MapFrom(e => e.Category.Name));
+            CreateMap<Expenses, GetExpensesDto>()
+                .ForMember("CategoryName", 
+                    cn => cn.MapFrom(e => e.Category.Name));
             CreateMap<AddExpensesDto, Expenses>();
             CreateMap<UpdateExpensesDto, Expenses>();
 
-            CreateMap<Incomes, GetIncomesDto>();
+            CreateMap<Incomes, GetIncomesDto>()
+                .ForMember("CategoryName", 
+                    cn => cn.MapFrom(i => i.Category.Name));
             CreateMap<AddIncomesDto, Incomes>();
             CreateMap<UpdateIncomesDto, Incomes>();
 

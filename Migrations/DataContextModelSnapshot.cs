@@ -38,12 +38,12 @@ namespace plusminus.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("userId")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("userId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("CategoryExpenses");
                 });
@@ -64,7 +64,12 @@ namespace plusminus.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("CategoryIncomes");
                 });
@@ -112,13 +117,17 @@ namespace plusminus.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Incomes");
                 });
@@ -164,7 +173,18 @@ namespace plusminus.Migrations
                 {
                     b.HasOne("plusminus.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("userId")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("plusminus.Models.CategoryIncomes", b =>
+                {
+                    b.HasOne("plusminus.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -190,14 +210,40 @@ namespace plusminus.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("plusminus.Models.Incomes", b =>
+                {
+                    b.HasOne("plusminus.Models.CategoryIncomes", "Category")
+                        .WithMany("Incomes")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("plusminus.Models.User", "User")
+                        .WithMany("Incomes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("plusminus.Models.CategoryExpenses", b =>
                 {
                     b.Navigation("Expenses");
                 });
 
+            modelBuilder.Entity("plusminus.Models.CategoryIncomes", b =>
+                {
+                    b.Navigation("Incomes");
+                });
+
             modelBuilder.Entity("plusminus.Models.User", b =>
                 {
                     b.Navigation("Expenses");
+
+                    b.Navigation("Incomes");
                 });
 #pragma warning restore 612, 618
         }

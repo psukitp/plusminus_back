@@ -87,7 +87,7 @@ namespace plusminus.Services.CategoryExpansesService
             try
             {
                 var dbCategoryExpanses = await _context.CategoryExpenses.ToListAsync();
-                var categories = dbCategoryExpanses.Where(c => c.userId == userId).ToList();
+                var categories = dbCategoryExpanses.Where(c => c.UserId == userId).ToList();
                 serviceResponse.Data = categories.Select(ci => _mapper.Map<CategoryExpenses, GetCategoryExpansesDto>(ci)).ToList();
             }
             catch (Exception ex)

@@ -70,6 +70,7 @@ namespace plusminus.Services.ExpensesService
                 var expenses = await _context.Expenses.FindAsync(id);
                 if (expenses is null) throw new Exception("Данные расходы не были найдены");
 
+                //TODO вернуть удаленное надо бы по-хорошему
                 _context.Expenses.Remove(expenses);
                 await _context.SaveChangesAsync();
             } catch (Exception ex)
@@ -89,7 +90,7 @@ namespace plusminus.Services.ExpensesService
                 var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
 
                 var dbExpenses = expenses
-                    .Where(e => e.UserId == userId && e.Date.Month == date.Month && e.Date.Year == e.Date.Year)
+                    .Where(e => e.UserId == userId && e.Date.Month == date.Month && e.Date.Year == date.Year)
                     .GroupBy(e => e.CategoryId)
                     .Select(g => new
                     {
@@ -141,6 +142,27 @@ namespace plusminus.Services.ExpensesService
 
                 serviceResponse.Data = _mapper.Map<GetExpensesDto>(expenses);
             } catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<Double>> GetExpensesSum(int id)
+        {
+            var serviceResponse = new ServiceResponse<Double>();
+            try
+            {
+                var currentMonth = DateTime.Now.Month;
+                var currentYear = DateTime.Now.Year;
+                var expenses = await _context.Expenses
+                    .Where(e => e.Date.Month == currentMonth && e.Date.Year == currentYear && e.UserId == id)
+                    .SumAsync(e => e.Amount);
+                serviceResponse.Data = expenses;
+            }
+            catch (Exception ex)
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = ex.Message;
