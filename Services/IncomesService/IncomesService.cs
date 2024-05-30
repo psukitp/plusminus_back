@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Globalization;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using plusminus.Data;
 using plusminus.Dtos.Incomes;
@@ -144,6 +145,73 @@ namespace plusminus.Services.IncomesService
 
                 serviceResponse.Data = result;
 
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+        
+        public async Task<ServiceResponse<GetIncomesThisMonthStat>> GetIncomesSum(int id)
+        {
+            var serviceResponse = new ServiceResponse<GetIncomesThisMonthStat>();
+            try
+            {
+                var currentDate = DateTime.Now;
+                var incomesThisMonth = await _context.Incomes
+                    .Where(i => i.Date.Month == currentDate.Month && i.Date.Year == currentDate.Year && i.UserId == id)
+                    .SumAsync(i => i.Amount);
+
+                var prevDate = currentDate.AddMonths(-1);
+                var incomesPrevMonth = await _context.Incomes
+                    .Where(i => i.Date.Month == prevDate.Month && i.Date.Year == prevDate.Year && i.UserId == id)
+                    .SumAsync(i => i.Amount);
+
+                GetIncomesThisMonthStat result = new GetIncomesThisMonthStat
+                {
+                    IncomesDiff = incomesThisMonth - incomesPrevMonth,
+                    IncomesTotal = incomesThisMonth
+                };
+                serviceResponse.Data = result;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+        
+        public async Task<ServiceResponse<GeThisYearIncomes>> GetIncomesLastFourMonth(int id)
+        {
+            var serviceResponse = new ServiceResponse<GeThisYearIncomes>();
+            try
+            {
+                var currentDate = DateTime.Now;
+                GeThisYearIncomes result = new GeThisYearIncomes();
+                result.Monthes = new List<string>();
+                result.Values = new List<double>();
+                
+                for (var i = 0; i < currentDate.Month; i++)
+                {
+                    var month = currentDate.AddMonths(-i);
+                    var monthIncomes = await _context.Incomes
+                        .Where(e => e.Date.Month == month.Month && e.Date.Year == month.Year && e.UserId == id)
+                        .SumAsync(e => e.Amount);
+
+                    var currentMonthName = DateTimeFormatInfo.CurrentInfo.MonthNames[month.Month - 1];
+                    result.Monthes.Add(char.ToUpper(currentMonthName[0]) + currentMonthName.Substring(1).ToLower());
+                    result.Values.Add(monthIncomes == 0 ? -1 : monthIncomes);
+                }
+
+                result.Monthes.Reverse();
+                result.Values.Reverse();
+                
+                serviceResponse.Data = result;
             }
             catch (Exception ex)
             {

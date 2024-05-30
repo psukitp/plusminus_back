@@ -86,5 +86,39 @@ namespace plusminus.Controllers
 
         [HttpDelete("incomes/{id}")]
         public async Task<ActionResult<ServiceResponse<List<GetIncomesDto>>>> DeleteExpenses(int id) => Ok(await _incomesService.DeleteIncomesById(id));
+
+        [HttpGet("incomes/sum")]
+        public async Task<ActionResult<ServiceResponse<GetIncomesThisMonthStat>>> GetIncomesSum()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
+            {
+                return BadRequest("Неверный идентификатор пользователя.");
+            }
+
+            return Ok(await _incomesService.GetIncomesSum(userId));
+        }
+        
+        [HttpGet("incomes/dynamicmonth")]
+        public async Task<ActionResult<ServiceResponse<GetThisYearExpenses>>> GetIncomesThisYear()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
+            {
+                return BadRequest("Неверный идентификатор пользователя.");
+            }
+
+            return Ok(await _incomesService.GetIncomesLastFourMonth(userId));
+        }
     }
 }

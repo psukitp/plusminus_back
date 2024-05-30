@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Globalization;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using plusminus.Data;
 using plusminus.Dtos.Expenses;
@@ -81,6 +82,52 @@ namespace plusminus.Services.ExpensesService
 
             return serviceResponse;
         }
+        
+        public async Task<ServiceResponse<List<ExpensesByCategory>>> GetExpansesByCategoryMonth(int userId)
+        {
+            var serviceResponse = new ServiceResponse<List<ExpensesByCategory>>();
+            try
+            {
+                var currentMonth = DateTime.Now.Month;
+                var currentYear = DateTime.Now.Year;
+                var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
+
+                var dbExpenses = expenses
+                    .Where(e => e.UserId == userId && e.Date.Month == currentMonth && e.Date.Year == currentYear)
+                    .GroupBy(e => e.CategoryId)
+                    .Select(g => new
+                    {
+                        categoryId = g.Key,
+                        amount = g.Sum(e => e.Amount)
+                    })
+                    .ToList();
+
+                var result = new List<ExpensesByCategory>();
+                foreach (var expense in dbExpenses)
+                {
+                    var category = await _context.CategoryExpenses.FirstOrDefaultAsync(c => c.Id == expense.categoryId);
+                    if (category != null)
+                    {
+                        result.Add(new ExpensesByCategory
+                        {
+                            CategoryName = category.Name,
+                            Color = category.Color,
+                            Amount = expense.amount
+                        });
+                    }
+                }
+
+                serviceResponse.Data = result;
+
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
 
         public async Task<ServiceResponse<List<ExpensesByCategory>>> GetExpansesByCategory(int userId, DateOnly date)
         {
@@ -150,17 +197,63 @@ namespace plusminus.Services.ExpensesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<Double>> GetExpensesSum(int id)
+        public async Task<ServiceResponse<ExpensesThisMonthStat>> GetExpensesSum(int id)
         {
-            var serviceResponse = new ServiceResponse<Double>();
+            var serviceResponse = new ServiceResponse<ExpensesThisMonthStat>();
             try
             {
-                var currentMonth = DateTime.Now.Month;
-                var currentYear = DateTime.Now.Year;
-                var expenses = await _context.Expenses
-                    .Where(e => e.Date.Month == currentMonth && e.Date.Year == currentYear && e.UserId == id)
+                var currentDate = DateTime.Now;
+                var expensesThisMonth = await _context.Expenses
+                    .Where(e => e.Date.Month == currentDate.Month && e.Date.Year == currentDate.Year && e.UserId == id)
                     .SumAsync(e => e.Amount);
-                serviceResponse.Data = expenses;
+
+                var prevDate = currentDate.AddMonths(-1);
+                var expensesPrevMonth = await _context.Expenses
+                    .Where(e => e.Date.Month == prevDate.Month && e.Date.Year == prevDate.Year && e.UserId == id)
+                    .SumAsync(e => e.Amount);
+
+                ExpensesThisMonthStat result = new ExpensesThisMonthStat
+                {
+                    ExpensesDiff = expensesThisMonth - expensesPrevMonth,
+                    ExpensesTotal = expensesThisMonth
+                };
+                serviceResponse.Data = result;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetThisYearExpenses>> GetExpensesThisYear(int id)
+        {
+            var serviceResponse = new ServiceResponse<GetThisYearExpenses>();
+            try
+            {
+                var currentDate = DateTime.Now;
+                GetThisYearExpenses result = new GetThisYearExpenses();
+                result.Monthes = new List<string>();
+                result.Values = new List<double>();
+                
+                for (var i = 0; i < currentDate.Month; i++)
+                {
+                    var month = currentDate.AddMonths(-i);
+                    var monthExpenses = await _context.Expenses
+                        .Where(e => e.Date.Month == month.Month && e.Date.Year == month.Year && e.UserId == id)
+                        .SumAsync(e => e.Amount);
+
+                    var currentMonthName = DateTimeFormatInfo.CurrentInfo.MonthNames[month.Month - 1];
+                    result.Monthes.Add(char.ToUpper(currentMonthName[0]) + currentMonthName.Substring(1).ToLower());
+                    result.Values.Add(monthExpenses == 0 ? -1 : monthExpenses);
+                }
+
+                result.Monthes.Reverse();
+                result.Values.Reverse();
+                
+                serviceResponse.Data = result;
             }
             catch (Exception ex)
             {

@@ -92,7 +92,7 @@ namespace plusminus.Controllers
         }
 
         [HttpGet("expanses/sum")]
-        public async Task<ActionResult<ServiceResponse<Double>>> GetExpensesSum()
+        public async Task<ActionResult<ServiceResponse<double>>> GetExpensesSum()
         {
             var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             if (!authenticateResult.Succeeded)
@@ -106,6 +106,40 @@ namespace plusminus.Controllers
             }
 
             return Ok(await _expensesService.GetExpensesSum(userId));
+        }
+        
+        [HttpGet("expanses/bycategory/month")]
+        public async Task<ActionResult<ServiceResponse<List<ExpensesByCategory>>>> GetExpensesByCategoryMonth()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
+            {
+                return BadRequest("Неверный идентификатор пользователя.");
+            }
+
+            return Ok(await _expensesService.GetExpansesByCategoryMonth(userId));
+        }
+
+        [HttpGet("expanses/dynamicmonth")]
+        public async Task<ActionResult<ServiceResponse<GetThisYearExpenses>>> GetExpensesLastFourMonth()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
+            {
+                return BadRequest("Неверный идентификатор пользователя.");
+            }
+
+            return Ok(await _expensesService.GetExpensesThisYear(userId));
         }
     }
 }
