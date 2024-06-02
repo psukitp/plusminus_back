@@ -37,7 +37,8 @@ namespace plusminus.Services.IncomesService
                 await _context.SaveChangesAsync();
 
                 var dbIncomes = await _context.Incomes.Include(i => i.Category).ToListAsync();
-                serviceResponse.Data = dbIncomes.Select(i => _mapper.Map<Incomes, GetIncomesDto>(i)).ToList();
+                var incomesWithDate = dbIncomes.Where(e => e.UserId == userId && e.Date == incomesToAdd.Date);
+                serviceResponse.Data = incomesWithDate.Select(i => _mapper.Map<Incomes, GetIncomesDto>(i)).ToList();
             } catch (Exception ex)
             {
                 serviceResponse.Success = false;
