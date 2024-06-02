@@ -5,9 +5,9 @@ namespace plusminus.Services.CategoryExpansesService
 {
     public interface ICategoryExpansesService
     {
-        Task<ServiceResponse<List<GetCategoryExpansesDto>>> AddCategoryExpanses(AddCategoryExpansesDto newCategoryExpanses);
-        Task<ServiceResponse<GetCategoryExpansesDto>> UpdateCategoryExpanses(UpdateCategoryExpansesDto updatedCategoryExpanses);
-        Task<ServiceResponse<List<GetCategoryExpansesDto>>> DeleteCategoryExpansesById(int id);
+        Task<ServiceResponse<GetCategoryExpansesDto>> AddCategoryExpanses(AddCategoryExpansesDto newCategoryExpanses, int userId);
+        Task<ServiceResponse<GetCategoryExpansesDto>> UpdateCategoryExpanses(UpdateCategoryExpansesDto updatedCategoryExpanses, int userId);
+        Task<ServiceResponse<int>> DeleteCategoryExpansesById(int id, int userId);
         Task<ServiceResponse<List<GetCategoryExpansesDto>>> GetAllCategories(int userId);
     }
 }
