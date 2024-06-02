@@ -37,57 +37,13 @@ namespace plusminus.Controllers
         }
 
         [HttpPost("category/expenses/add")]
-        public async Task<ActionResult<ServiceResponse<List<GetCategoryExpansesDto>>>> AddCategoryExpanses(
-            AddCategoryExpansesDto newCategoryExpanses)
-        {
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-            
-            return Ok(await _categoryExpansesService.AddCategoryExpanses(newCategoryExpanses, userId));
-        }
+        public async Task<ActionResult<ServiceResponse<List<GetCategoryExpansesDto>>>> AddCategoryExpanses(AddCategoryExpansesDto newCategoryExpanses) => Ok(await _categoryExpansesService.AddCategoryExpanses(newCategoryExpanses));
 
 
         [HttpPatch("category/expenses/update")]
-        public async Task<ActionResult<ServiceResponse<GetCategoryExpansesDto>>> UpdateCategoryExpanses(
-            UpdateCategoryExpansesDto updatedCategoryExpanses)
-        {
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-            
-            return Ok(await _categoryExpansesService.UpdateCategoryExpanses(updatedCategoryExpanses, userId));
-        }
+        public async Task<ActionResult<ServiceResponse<GetCategoryExpansesDto>>> UpdateCategoryExpanses(UpdateCategoryExpansesDto updatedCategoryExpanses) => Ok(await _categoryExpansesService.UpdateCategoryExpanses(updatedCategoryExpanses));
 
         [HttpDelete("category/expenses/{id}")]
-        public async Task<ActionResult<ServiceResponse<int>>> DeleteCategoryExpanses(int id)
-        {
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-            
-            return Ok(await _categoryExpansesService.DeleteCategoryExpansesById(id, userId));
-        }
+        public async Task<ActionResult<ServiceResponse<List<GetCategoryExpansesDto>>>> DeleteCategoryExpanses(int id) => Ok(await _categoryExpansesService.DeleteCategoryExpansesById(id));
     }
 }

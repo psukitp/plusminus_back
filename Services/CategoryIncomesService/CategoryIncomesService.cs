@@ -16,17 +16,17 @@ namespace plusminus.Services.CategoryIncomesService
             _mapper = mapper;
             _context = context;
         }
-        public async Task<ServiceResponse<GetCategoryIncomesDto>> AddCategoryIncomes(AddCategoryIncomesDto newCategoryIncomes, int userId)
+        public async Task<ServiceResponse<List<GetCategoryIncomesDto>>> AddCategoryIncomes(AddCategoryIncomesDto newCategoryIncomes)
         {
-            var serviceResponse = new ServiceResponse<GetCategoryIncomesDto>();
+            var serviceResponse = new ServiceResponse<List<GetCategoryIncomesDto>>();
             try
             {
                 var incomesCat = _mapper.Map<AddCategoryIncomesDto, CategoryIncomes>(newCategoryIncomes);
-                incomesCat.UserId = userId;
-                var addedCategorie = await _context.CategoryIncomes.AddAsync(incomesCat);
+                var addedIncomes = await _context.CategoryIncomes.AddAsync(incomesCat);
                 await _context.SaveChangesAsync();
-                
-                serviceResponse.Data = _mapper.Map<CategoryIncomes, GetCategoryIncomesDto>(addedCategorie.Entity);
+
+                var dbCategoryIncomes = await _context.CategoryIncomes.ToListAsync();
+                serviceResponse.Data = dbCategoryIncomes.Select(ci => _mapper.Map<CategoryIncomes, GetCategoryIncomesDto>(ci)).ToList();
             }
             catch (Exception ex)
             {
@@ -36,20 +36,19 @@ namespace plusminus.Services.CategoryIncomesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<int>> DeleteCategoryIncomesById(int id, int userId)
+        public async Task<ServiceResponse<List<GetCategoryIncomesDto>>> DeleteCategoryIncomesById(int id)
         {
-            var serviceResponse = new ServiceResponse<int>();
+            var serviceResponse = new ServiceResponse<List<GetCategoryIncomesDto>>();
             try
             {
                 var categoryIncomes = await _context.CategoryIncomes.FindAsync(id);
-                if (categoryIncomes is null || categoryIncomes.UserId != userId) throw new Exception("Категория не найдена");
-                
-                var currentCategoryId = categoryIncomes.Id;
+                if (categoryIncomes is null) throw new Exception("Категория не найдена");
 
                 _context.CategoryIncomes.Remove(categoryIncomes);
                 await _context.SaveChangesAsync();
 
-                serviceResponse.Data = currentCategoryId;
+                var dbCategoryIncomes = await _context.CategoryIncomes.ToListAsync();
+                serviceResponse.Data = dbCategoryIncomes.Select(i => _mapper.Map<CategoryIncomes, GetCategoryIncomesDto>(i)).ToList();
             }
             catch (Exception ex)
             {
@@ -59,13 +58,13 @@ namespace plusminus.Services.CategoryIncomesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetCategoryIncomesDto>> UpdateCategoryIncomes(UpdateCategoryIncomesDto updatedCategoryIncomes, int userId)
+        public async Task<ServiceResponse<GetCategoryIncomesDto>> UpdateCategoryIncomes(UpdateCategoryIncomesDto updatedCategoryIncomes)
         {
             var serviceResponse = new ServiceResponse<GetCategoryIncomesDto>();
             try
             {
                 var categoryIncomes = await _context.CategoryIncomes.FindAsync(updatedCategoryIncomes.Id);
-                if (categoryIncomes is null || categoryIncomes.UserId != userId) throw new Exception("Категория не найдена");
+                if (categoryIncomes is null) throw new Exception("Категория не найдена");
 
                 categoryIncomes.Name = updatedCategoryIncomes.Name;
                 categoryIncomes.Color = updatedCategoryIncomes.Color;

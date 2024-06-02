@@ -16,17 +16,17 @@ namespace plusminus.Services.CategoryExpansesService
             _mapper = mapper;
             _context = context;
         }
-        public async Task<ServiceResponse<GetCategoryExpansesDto>> AddCategoryExpanses(AddCategoryExpansesDto newCategoryExpanses, int userId)
+        public async Task<ServiceResponse<List<GetCategoryExpansesDto>>> AddCategoryExpanses(AddCategoryExpansesDto newCategoryExpanses)
         {
-            var serviceResponse = new ServiceResponse<GetCategoryExpansesDto>();
+            var serviceResponse = new ServiceResponse<List<GetCategoryExpansesDto>>();
             try
             {
                 var expansesCategory = _mapper.Map<AddCategoryExpansesDto, CategoryExpenses>(newCategoryExpanses);
-                expansesCategory.UserId = userId;
                 var addedExpanses = await _context.CategoryExpenses.AddAsync(expansesCategory);
                 await _context.SaveChangesAsync();
-                
-                serviceResponse.Data = _mapper.Map<CategoryExpenses, GetCategoryExpansesDto>(addedExpanses.Entity);
+
+                var dbCategoryExpanses = await _context.CategoryExpenses.ToListAsync();
+                serviceResponse.Data = dbCategoryExpanses.Select(ci => _mapper.Map<CategoryExpenses, GetCategoryExpansesDto>(ci)).ToList();
             }
             catch (Exception ex)
             {
@@ -36,20 +36,19 @@ namespace plusminus.Services.CategoryExpansesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<int>> DeleteCategoryExpansesById(int id, int userId)
+        public async Task<ServiceResponse<List<GetCategoryExpansesDto>>> DeleteCategoryExpansesById(int id)
         {
-            var serviceResponse = new ServiceResponse<int>();
+            var serviceResponse = new ServiceResponse<List<GetCategoryExpansesDto>>();
             try
             {
                 var expansesCategory = await _context.CategoryExpenses.FindAsync(id);
-                if (expansesCategory is null || expansesCategory.UserId != userId) throw new Exception("Категория не найдена");
-
-                var currentCategoryId = expansesCategory.Id;
+                if (expansesCategory is null) throw new Exception("Категория не найдена");
 
                 _context.CategoryExpenses.Remove(expansesCategory);
                 await _context.SaveChangesAsync();
-                
-                serviceResponse.Data = currentCategoryId;
+
+                var dbCategoryExpanses = await _context.CategoryExpenses.ToListAsync();
+                serviceResponse.Data = dbCategoryExpanses.Select(ci => _mapper.Map<CategoryExpenses, GetCategoryExpansesDto>(ci)).ToList();
             }
             catch (Exception ex)
             {
@@ -59,13 +58,13 @@ namespace plusminus.Services.CategoryExpansesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetCategoryExpansesDto>> UpdateCategoryExpanses(UpdateCategoryExpansesDto updatedCategoryExpanses, int userId)
+        public async Task<ServiceResponse<GetCategoryExpansesDto>> UpdateCategoryExpanses(UpdateCategoryExpansesDto updatedCategoryExpanses)
         {
             var serviceResponse = new ServiceResponse<GetCategoryExpansesDto>();
             try
             {
                 var expansesCategory = await _context.CategoryExpenses.FindAsync(updatedCategoryExpanses.Id);
-                if (expansesCategory is null || expansesCategory.UserId != userId) throw new Exception("Категория не найдена");
+                if (expansesCategory is null) throw new Exception("Категория не найдена");
 
                 expansesCategory.Name = updatedCategoryExpanses.Name;
                 expansesCategory.Color = updatedCategoryExpanses.Color;
