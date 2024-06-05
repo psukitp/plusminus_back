@@ -63,17 +63,20 @@ namespace plusminus.Services.ExpensesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetExpensesDto>>> DeleteExpensesById(int id)
+        public async Task<ServiceResponse<int>> DeleteExpensesById(int id, int userId)
         {
-            var serviceResponse = new ServiceResponse<List<GetExpensesDto>>();
+            var serviceResponse = new ServiceResponse<int>();
             try
             {
                 var expenses = await _context.Expenses.FindAsync(id);
-                if (expenses is null) throw new Exception("Данные расходы не были найдены");
+                if (expenses is null || expenses.UserId != userId) throw new Exception("Данные расходы не были найдены");
 
-                //TODO вернуть удаленное надо бы по-хорошему
+                var currentId = expenses.Id;
+                
                 _context.Expenses.Remove(expenses);
                 await _context.SaveChangesAsync();
+
+                serviceResponse.Data = currentId;
             } catch (Exception ex)
             {
                 serviceResponse.Success = false;
@@ -154,6 +157,7 @@ namespace plusminus.Services.ExpensesService
                     {
                         result.Add(new ExpensesByCategory
                         {
+                            Id = category.Id,
                             CategoryName = category.Name,
                             Color = category.Color,
                             Amount = expense.amount
@@ -173,20 +177,22 @@ namespace plusminus.Services.ExpensesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetExpensesDto>> UpdateExpenses(UpdateExpensesDto newExpenses)
+        public async Task<ServiceResponse<GetExpensesDto>> UpdateExpenses(UpdateExpensesDto newExpenses, int userId)
         {
             var serviceResponse = new ServiceResponse<GetExpensesDto>();
             try
             {
                 var expenses = await _context.Expenses.FindAsync(newExpenses.Id);
                 if (expenses is null) throw new Exception("Данные расходы не были найдены");
-
-                expenses.Date = newExpenses.Date;
-                expenses.Amount = newExpenses.Amount;
-                expenses.CategoryId = newExpenses.CategoryId;
+                
+                if (newExpenses.Amount != null) expenses.Amount = newExpenses.Amount;
+                
+                if (newExpenses.CategoryId != null) expenses.CategoryId = newExpenses.CategoryId;
 
                 await _context.SaveChangesAsync();
 
+                var category = await _context.CategoryExpenses.FindAsync(expenses.CategoryId);
+                expenses.Category = category;
                 serviceResponse.Data = _mapper.Map<GetExpensesDto>(expenses);
             } catch (Exception ex)
             {

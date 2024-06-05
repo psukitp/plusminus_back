@@ -137,6 +137,7 @@ namespace plusminus.Services.IncomesService
                     {
                         result.Add(new IncomesByCategory
                         {
+                            Id = category.Id,
                             CategoryName = category.Name,
                             Color = category.Color,
                             Amount = income.amount

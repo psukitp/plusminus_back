@@ -53,22 +53,45 @@ namespace plusminus.Controllers
             {
                 return BadRequest("Неверный идентификатор пользователя.");
             }
-            var newExpense = new AddExpensesDto
-            {
-                Amount = newExpenses.Amount,
-                CategoryId = newExpenses.CategoryId,
-                Date = newExpenses.Date,
-            };
 
-            return Ok(await _expensesService.AddExpenses(newExpense, userId));
+            return Ok(await _expensesService.AddExpenses(newExpenses, userId));
         }
-        
+
 
         [HttpPatch("expanses/update")]
-        public async Task<ActionResult<ServiceResponse<GetExpensesDto>>> UpdateExpenses(UpdateExpensesDto newExpenses) => Ok(await _expensesService.UpdateExpenses(newExpenses));
+        public async Task<ActionResult<ServiceResponse<GetExpensesDto>>> UpdateExpenses(UpdateExpensesDto newExpenses)
+        {
+            
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
+            {
+                return BadRequest("Неверный идентификатор пользователя.");
+            }
+            
+            return Ok(await _expensesService.UpdateExpenses(newExpenses, userId));
+        }
 
         [HttpDelete("expanses/{id}")]
-        public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> DeleteExpenses(int id) => Ok(await _expensesService.DeleteExpensesById(id));
+        public async Task<ActionResult<ServiceResponse<int>>> DeleteExpenses(int id)
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
+            {
+                return BadRequest("Неверный идентификатор пользователя.");
+            }
+            
+            return Ok(await _expensesService.DeleteExpensesById(id, userId));
+        }
 
         [HttpGet("expanses/bycategory")]
         public async Task<ActionResult<ServiceResponse<List<ExpensesByCategory>>>> GetExpensesByCategory([FromQuery] string date)

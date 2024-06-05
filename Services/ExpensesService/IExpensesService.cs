@@ -7,8 +7,8 @@ namespace plusminus.Services.ExpensesService
     {
         Task<ServiceResponse<List<GetExpensesDto>>> GetExpensesByUserId(int id, DateOnly date);
         Task<ServiceResponse<List<GetExpensesDto>>> AddExpenses(AddExpensesDto newExpenses, int userId);
-        Task<ServiceResponse<GetExpensesDto>> UpdateExpenses(UpdateExpensesDto newExpenses);
-        Task<ServiceResponse<List<GetExpensesDto>>> DeleteExpensesById(int id);
+        Task<ServiceResponse<GetExpensesDto>> UpdateExpenses(UpdateExpensesDto newExpenses, int userId);
+        Task<ServiceResponse<int>> DeleteExpensesById(int id, int userId);
         Task<ServiceResponse<List<ExpensesByCategory>>> GetExpansesByCategory(int id, DateOnly date);
         Task<ServiceResponse<List<ExpensesByCategory>>> GetExpansesByCategoryMonth(int id);
         Task<ServiceResponse<ExpensesThisMonthStat>> GetExpensesSum(int id);
