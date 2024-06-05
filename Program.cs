@@ -29,7 +29,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         {
             options.Cookie.Name = ".AspNetCore.Cookies";
             options.Cookie.HttpOnly = true; 
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(30); 
+            options.ExpireTimeSpan = TimeSpan.FromDays(14); 
             options.SlidingExpiration = true; 
         });
 
@@ -44,17 +44,18 @@ builder.Services.AddScoped<IUsersService, UsersService>();
 
 var app = builder.Build();
 
-app.UseAuthentication();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseCors(builder =>
 {
-    //TODO временно для разработки, поменять на нормальные настройки
+    //TODO пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     builder.AllowCredentials();
     builder.AllowAnyHeader();
     builder.AllowAnyMethod();
@@ -62,8 +63,6 @@ app.UseCors(builder =>
 });
 
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
 
 app.MapControllers();
 

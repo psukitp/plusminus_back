@@ -15,5 +15,6 @@ namespace plusminus.Data
         public DbSet<Incomes> Incomes => Set<Incomes>();
         public DbSet<CategoryExpenses> CategoryExpenses => Set<CategoryExpenses>();
         public DbSet<CategoryIncomes> CategoryIncomes => Set<CategoryIncomes>();
+        public DbSet<UserSettings> UserSettings => Set<UserSettings>();
     }
 }
