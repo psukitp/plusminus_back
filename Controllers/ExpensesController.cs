@@ -1,14 +1,13 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using plusminus.Dtos.Expenses;
 using plusminus.Models;
 using plusminus.Services.ExpensesService;
 using System.Globalization;
-using System.Security.Claims;
+using plusminus.Middlewares;
 
 namespace plusminus.Controllers
 {
+    [ServiceFilter(typeof(AuthorizeFilter))]
     [ApiController]
     [Route("api/[controller]")]
     public class ExpensesController : ControllerBase
@@ -27,33 +26,14 @@ namespace plusminus.Controllers
             {
                 return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
             }
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
+            var userId = (int)HttpContext.Items["UserId"]!;
 
             return Ok(await _expensesService.GetExpensesByUserId(userId, parsedDate));
         }
 
         [HttpPost("expanses/add")]
         public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> AddExpenses(AddExpensesDto newExpenses) {
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _expensesService.AddExpenses(newExpenses, userId));
         }
 
@@ -61,35 +41,14 @@ namespace plusminus.Controllers
         [HttpPatch("expanses/update")]
         public async Task<ActionResult<ServiceResponse<GetExpensesDto>>> UpdateExpenses(UpdateExpensesDto newExpenses)
         {
-            
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-            
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _expensesService.UpdateExpenses(newExpenses, userId));
         }
 
         [HttpDelete("expanses/{id}")]
         public async Task<ActionResult<ServiceResponse<int>>> DeleteExpenses(int id)
         {
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-            
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _expensesService.DeleteExpensesById(id, userId));
         }
 
@@ -100,68 +59,28 @@ namespace plusminus.Controllers
             {
                 return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
             }
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _expensesService.GetExpansesByCategory(userId, parsedDate));
         }
 
         [HttpGet("expanses/sum")]
         public async Task<ActionResult<ServiceResponse<double>>> GetExpensesSum()
         {
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _expensesService.GetExpensesSum(userId));
         }
         
         [HttpGet("expanses/bycategory/month")]
         public async Task<ActionResult<ServiceResponse<List<ExpensesByCategory>>>> GetExpensesByCategoryMonth()
         {
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _expensesService.GetExpansesByCategoryMonth(userId));
         }
 
         [HttpGet("expanses/dynamicmonth")]
         public async Task<ActionResult<ServiceResponse<GetThisYearExpenses>>> GetExpensesLastFourMonth()
         {
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _expensesService.GetExpensesThisYear(userId));
         }
     }

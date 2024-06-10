@@ -47,13 +47,13 @@ namespace plusminus.Services.IncomesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<int>> DeleteIncomesById(int id)
+        public async Task<ServiceResponse<int>> DeleteIncomesById(int id, int userId)
         {
             var serviceResponse = new ServiceResponse<int>();
             try
             {
                 var incomes = await _context.Incomes.FindAsync(id);
-                if (incomes is null) throw new Exception("Данные доходы не были найдены");
+                if (incomes is null || incomes.UserId != userId) throw new Exception("Данные доходы не были найдены");
                 
                 var currentId = incomes.Id;
 
@@ -89,13 +89,13 @@ namespace plusminus.Services.IncomesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetIncomesDto>> UpdateIncomes(UpdateIncomesDto updatedIncomes)
+        public async Task<ServiceResponse<GetIncomesDto>> UpdateIncomes(UpdateIncomesDto updatedIncomes, int userId)
         {
             var serviceResponse = new ServiceResponse<GetIncomesDto>();
             try
             {
                 var incomes = await _context.Incomes.FindAsync(updatedIncomes.Id);
-                if (incomes is null) throw new Exception("Не удалось найти данные доходы");
+                if (incomes is null || incomes.UserId != userId) throw new Exception("Не удалось найти данные доходы");
                 
                 if (incomes.Amount != null) incomes.Amount = updatedIncomes.Amount;
                 if (incomes.CategoryId != null) incomes.CategoryId = updatedIncomes.CategoryId;

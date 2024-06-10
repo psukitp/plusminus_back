@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using plusminus.Data;
+using plusminus.Middlewares;
 using plusminus.Services.CategoryExpansesService;
 using plusminus.Services.CategoryIncomesService;
 using plusminus.Services.ExpensesService;
@@ -35,6 +36,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddScoped<AuthorizeFilter>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IExpensesService, ExpensesService>();
 builder.Services.AddScoped<IIncomesService, IncomesService>();

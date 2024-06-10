@@ -183,7 +183,7 @@ namespace plusminus.Services.ExpensesService
             try
             {
                 var expenses = await _context.Expenses.FindAsync(newExpenses.Id);
-                if (expenses is null) throw new Exception("Данные расходы не были найдены");
+                if (expenses is null || expenses.UserId != userId) throw new Exception("Данные расходы не были найдены");
                 
                 if (newExpenses.Amount != null) expenses.Amount = newExpenses.Amount;
                 

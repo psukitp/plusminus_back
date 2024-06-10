@@ -1,16 +1,14 @@
 ﻿using System.Globalization;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using plusminus.Dtos.Expenses;
 using plusminus.Dtos.Incomes;
+using plusminus.Middlewares;
 using plusminus.Models;
 using plusminus.Services.IncomesService;
 
 namespace plusminus.Controllers
 {
+    [ServiceFilter(typeof(AuthorizeFilter))]
     [ApiController]
     [Route("api/[controller]")]
     public class IncomesController : ControllerBase
@@ -29,16 +27,7 @@ namespace plusminus.Controllers
             {
                 return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
             }
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _incomesService.GetIncomesByUserId(userId, parsedDate));
         }
 
@@ -50,91 +39,49 @@ namespace plusminus.Controllers
             {
                 return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
             }
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _incomesService.GetIncomesByCategory(userId, parsedDate));
         }
 
         [HttpPost("incomes/add")]
         public async Task<ActionResult<ServiceResponse<List<GetIncomesDto>>>> AddExpenses(AddIncomesDto newIncomes)
         {
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _incomesService.AddIncomes(newIncomes, userId));
         }
 
         [HttpPatch("incomes/update")]
-        public async Task<ActionResult<ServiceResponse<GetIncomesDto>>> UpdateExpenses(UpdateIncomesDto updatedIncomes) => Ok(await _incomesService.UpdateIncomes(updatedIncomes));
+        public async Task<ActionResult<ServiceResponse<GetIncomesDto>>> UpdateExpenses(UpdateIncomesDto updatedIncomes)
+        {
+            var userId = (int)HttpContext.Items["UserId"]!;
+            return Ok(await _incomesService.UpdateIncomes(updatedIncomes, userId));
+        }
 
         [HttpDelete("incomes/{id}")]
-        public async Task<ActionResult<ServiceResponse<List<GetIncomesDto>>>> DeleteExpenses(int id) => Ok(await _incomesService.DeleteIncomesById(id));
+        public async Task<ActionResult<ServiceResponse<List<GetIncomesDto>>>> DeleteExpenses(int id)
+        {
+            var userId = (int)HttpContext.Items["UserId"]!;
+            return Ok(await _incomesService.DeleteIncomesById(id, userId));
+        }
 
         [HttpGet("incomes/sum")]
         public async Task<ActionResult<ServiceResponse<GetIncomesThisMonthStat>>> GetIncomesSum()
         {
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _incomesService.GetIncomesSum(userId));
         }
         
         [HttpGet("incomes/dynamicmonth")]
         public async Task<ActionResult<ServiceResponse<GetThisYearExpenses>>> GetIncomesThisYear()
         {
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _incomesService.GetIncomesLastFourMonth(userId));
         }
         
         [HttpGet("incomes/totalDiff")]
         public async Task<ActionResult<ServiceResponse<GetThisYearExpenses>>> GetTotalDiff()
         {
-            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!authenticateResult.Succeeded)
-            {
-                return Unauthorized();
-            }
-
-            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
-            {
-                return BadRequest("Неверный идентификатор пользователя.");
-            }
-
+            var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _incomesService.GetTotalDiff(userId));
         }
     }

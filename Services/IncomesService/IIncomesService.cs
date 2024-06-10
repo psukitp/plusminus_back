@@ -7,8 +7,8 @@ namespace plusminus.Services.IncomesService
     {
         Task<ServiceResponse<List<GetIncomesDto>>> GetIncomesByUserId(int id, DateOnly date);
         Task<ServiceResponse<List<GetIncomesDto>>> AddIncomes(AddIncomesDto newIncomes, int userId);
-        Task<ServiceResponse<GetIncomesDto>> UpdateIncomes(UpdateIncomesDto updatedIncomes);
-        Task<ServiceResponse<int>> DeleteIncomesById(int id);
+        Task<ServiceResponse<GetIncomesDto>> UpdateIncomes(UpdateIncomesDto updatedIncomes, int userId);
+        Task<ServiceResponse<int>> DeleteIncomesById(int id, int userId);
         Task<ServiceResponse<List<IncomesByCategory>>> GetIncomesByCategory(int id, DateOnly date);
         Task<ServiceResponse<GetIncomesThisMonthStat>> GetIncomesSum(int id);
         Task<ServiceResponse<GeThisYearIncomes>> GetIncomesLastFourMonth(int id);
