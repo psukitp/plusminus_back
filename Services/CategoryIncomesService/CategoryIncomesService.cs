@@ -99,5 +99,26 @@ namespace plusminus.Services.CategoryIncomesService
 
             return serviceResponse;
         }
+        
+        public async Task AddBaseCategories(int userId)
+        {
+            AddCategoryIncomesDto[] baseCategories =
+            {
+                new()
+                {
+                    Color = "rgb(178, 44, 203)",
+                    Name = "Работа"
+                }
+            };
+
+            var mappedCategories = baseCategories.Select(_mapper.Map<CategoryIncomes>).Select(c =>
+            {
+                c.UserId = userId;
+                return c;
+            });
+
+            await _context.CategoryIncomes.AddRangeAsync(mappedCategories);
+            await _context.SaveChangesAsync();
+        }
     }
 }

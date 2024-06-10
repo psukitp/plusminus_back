@@ -37,7 +37,7 @@ namespace plusminus.Controllers
 
                 var authProperties = new AuthenticationProperties
                 {
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30),
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(14),
                     IsPersistent = true
                 };
 
@@ -62,7 +62,7 @@ namespace plusminus.Controllers
 
                 var authProperties = new AuthenticationProperties
                 {
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30),
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(14),
                     IsPersistent = true
                 };
 

@@ -3,7 +3,8 @@ using plusminus.Data;
 using plusminus.Dtos.Users;
 using plusminus.Models;
 using Microsoft.EntityFrameworkCore;
-using plusminus.Helpers;
+using plusminus.Services.CategoryExpansesService;
+using plusminus.Services.CategoryIncomesService;
 
 namespace plusminus.Services.UsersService
 {
@@ -11,11 +12,15 @@ namespace plusminus.Services.UsersService
     {
         private readonly IMapper _mapper;
         private readonly DataContext _context;
+        private readonly ICategoryExpansesService  _categoryExpansesService;
+        private readonly ICategoryIncomesService  _categoryIncomesService;
 
-        public UsersService(IMapper mapper, DataContext context)
+        public UsersService(IMapper mapper, DataContext context,ICategoryExpansesService categoryExpansesService, ICategoryIncomesService categoryIncomesService)
         {
             _mapper = mapper;
             _context = context;
+            _categoryExpansesService = categoryExpansesService;
+            _categoryIncomesService = categoryIncomesService;
         }
 
         public async Task<ServiceResponse<UsersAuthenticateResponse>> Authenticate(UsersAuthenticateRequest user)
@@ -27,8 +32,7 @@ namespace plusminus.Services.UsersService
 
                 if (dbUser == null) throw new Exception("Введен неправильный логин или пароль");
                 if (!BCrypt.Net.BCrypt.Verify(user.Password, dbUser.PasswordHash)) throw new Exception("Введен неправильный логин или пароль");
-
-                var (accessToken, refreshToken) = JWTHelper.GenerateJwtTokens(dbUser);
+                
 
                 serviceResponse.Data = new UsersAuthenticateResponse
                 {
@@ -98,7 +102,11 @@ namespace plusminus.Services.UsersService
 
                 if (dbUserEntity == null) throw new Exception("Пользователь не найден");
 
-                var (accessToken, refreshToken) = JWTHelper.GenerateJwtTokens(dbUserEntity);
+                if (user.BaseCategories)
+                {
+                    await _categoryExpansesService.AddBaseCategories(dbUserEntity.Id);
+                    await _categoryIncomesService.AddBaseCategories(dbUserEntity.Id);
+                }
 
                 serviceResponse.Data = new UsersRegisterResponse
                 {

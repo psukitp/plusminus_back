@@ -120,5 +120,22 @@ namespace plusminus.Controllers
 
             return Ok(await _incomesService.GetIncomesLastFourMonth(userId));
         }
+        
+        [HttpGet("incomes/totalDiff")]
+        public async Task<ActionResult<ServiceResponse<GetThisYearExpenses>>> GetTotalDiff()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return Unauthorized();
+            }
+
+            if (!int.TryParse(authenticateResult.Principal.FindFirstValue("id"), out int userId))
+            {
+                return BadRequest("Неверный идентификатор пользователя.");
+            }
+
+            return Ok(await _incomesService.GetTotalDiff(userId));
+        }
     }
 }

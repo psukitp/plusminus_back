@@ -7,6 +7,7 @@
         public DateOnly Date { get; set; }
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
+        public string CategoryColor { get; set; }
         public int Amount { get; set; }
     }
 }

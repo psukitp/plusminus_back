@@ -98,5 +98,42 @@ namespace plusminus.Services.CategoryExpansesService
             }
             return serviceResponse;
         }
+
+        public async Task AddBaseCategories(int userId)
+        {
+            AddCategoryExpansesDto[] baseCategories =
+            {
+                new()
+                {
+                    Color = "rgb(51, 102, 255)",
+                    Name = "Продукты"
+                },
+                new()
+                {
+                    Color = "rgb(255, 51, 112)",
+                    Name = "Транспорт"
+                },
+                new()
+                {
+                    Color = "rgb(5, 255, 0)",
+                    Name = "Развлечения"
+                },
+                new()
+                {
+                    Color = "rgb(255, 96, 0)",
+                    Name = "Подписки"
+                }
+            };
+
+            var mappedCategories = baseCategories.Select(_mapper.Map<CategoryExpenses>).Select(c =>
+            {
+                c.UserId = userId;
+                return c;
+            });
+
+            await _context.CategoryExpenses.AddRangeAsync(mappedCategories);
+            await _context.SaveChangesAsync();
+        }
+        
     }
 }

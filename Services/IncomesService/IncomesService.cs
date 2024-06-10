@@ -47,19 +47,20 @@ namespace plusminus.Services.IncomesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<GetIncomesDto>>> DeleteIncomesById(int id)
+        public async Task<ServiceResponse<int>> DeleteIncomesById(int id)
         {
-            var serviceResponse = new ServiceResponse<List<GetIncomesDto>>();
+            var serviceResponse = new ServiceResponse<int>();
             try
             {
                 var incomes = await _context.Incomes.FindAsync(id);
                 if (incomes is null) throw new Exception("Данные доходы не были найдены");
+                
+                var currentId = incomes.Id;
 
                 _context.Incomes.Remove(incomes);
                 await _context.SaveChangesAsync();
-
-                var dbIncomes = await _context.Incomes.ToListAsync();
-                serviceResponse.Data = dbIncomes.Select(i => _mapper.Map<Incomes, GetIncomesDto>(i)).ToList();
+                
+                serviceResponse.Data = currentId;
             }
             catch (Exception ex)
             {
@@ -95,13 +96,14 @@ namespace plusminus.Services.IncomesService
             {
                 var incomes = await _context.Incomes.FindAsync(updatedIncomes.Id);
                 if (incomes is null) throw new Exception("Не удалось найти данные доходы");
-
-                incomes.Date = updatedIncomes.Date;
-                incomes.Amount = updatedIncomes.Amount;
-                incomes.CategoryId = updatedIncomes.CategoryId;
+                
+                if (incomes.Amount != null) incomes.Amount = updatedIncomes.Amount;
+                if (incomes.CategoryId != null) incomes.CategoryId = updatedIncomes.CategoryId;
 
                 await _context.SaveChangesAsync();
-
+                
+                var category = await _context.CategoryIncomes.FindAsync(incomes.CategoryId);
+                incomes.Category = category;
                 serviceResponse.Data = _mapper.Map<Incomes, GetIncomesDto>(incomes);
             }
             catch (Exception ex)
@@ -221,6 +223,29 @@ namespace plusminus.Services.IncomesService
                 serviceResponse.Message = ex.Message;
             }
 
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<int>> GetTotalDiff(int userId)
+        {
+            var serviceResponse = new ServiceResponse<int>();
+            try
+            {
+                var incomesSum = _context.Incomes
+                    .Where(i => i.UserId == userId)
+                    .Select(i => i.Amount)
+                    .Sum();
+                var expensesSum = _context.Expenses
+                    .Where(e => e.UserId == userId)
+                    .Select(e => e.Amount)
+                    .Sum();
+                serviceResponse.Data = incomesSum - expensesSum;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
             return serviceResponse;
         }
     }
