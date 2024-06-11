@@ -86,6 +86,12 @@ namespace plusminus.Services.UsersService
             var serviceResponse = new ServiceResponse<UsersRegisterResponse>();
             try
             {
+                var sameLoginUser =  await _context.Users.Where(u => u.Login == user.Login).ToListAsync();
+                if (sameLoginUser.Count > 0) throw new Exception("Пользователь с таким логином уже существует");
+                
+                var sameEmailUser =  await _context.Users.Where(u => u.Email == user.Email).ToListAsync();
+                if (sameEmailUser.Count > 0) throw new Exception("Пользователь с такой почтой уже существует");
+                
                 var addedUser = new User
                 {
                     Email = user.Email,
