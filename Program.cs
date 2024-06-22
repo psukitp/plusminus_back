@@ -28,6 +28,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(options =>
         {
+            options.Cookie.Domain = "plusminus-app.ru";
             options.Cookie.Name = ".AspNetCore.Cookies";
             options.Cookie.HttpOnly = true; 
             options.ExpireTimeSpan = TimeSpan.FromDays(14); 
