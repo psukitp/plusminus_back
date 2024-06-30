@@ -12,14 +12,14 @@ namespace plusminus.Services.UsersService
     {
         private readonly IMapper _mapper;
         private readonly DataContext _context;
-        private readonly ICategoryExpansesService  _categoryExpansesService;
+        private readonly ICategoryExpensesService  _categoryExpensesService;
         private readonly ICategoryIncomesService  _categoryIncomesService;
 
-        public UsersService(IMapper mapper, DataContext context,ICategoryExpansesService categoryExpansesService, ICategoryIncomesService categoryIncomesService)
+        public UsersService(IMapper mapper, DataContext context,ICategoryExpensesService categoryExpensesService, ICategoryIncomesService categoryIncomesService)
         {
             _mapper = mapper;
             _context = context;
-            _categoryExpansesService = categoryExpansesService;
+            _categoryExpensesService = categoryExpensesService;
             _categoryIncomesService = categoryIncomesService;
         }
 
@@ -110,7 +110,7 @@ namespace plusminus.Services.UsersService
 
                 if (user.BaseCategories)
                 {
-                    await _categoryExpansesService.AddBaseCategories(dbUserEntity.Id);
+                    await _categoryExpensesService.AddBaseCategories(dbUserEntity.Id);
                     await _categoryIncomesService.AddBaseCategories(dbUserEntity.Id);
                 }
 

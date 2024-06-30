@@ -20,7 +20,7 @@ namespace plusminus.Controllers
             _incomesService = incomesService;
         }
 
-        [HttpGet("incomes")]
+        [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<GetIncomesDto>>>> GetIncomes([FromQuery] string date)
         {
             if (!DateOnly.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedDate))
@@ -31,7 +31,7 @@ namespace plusminus.Controllers
             return Ok(await _incomesService.GetIncomesByUserId(userId, parsedDate));
         }
 
-        [HttpGet("incomes/bycategory")]
+        [HttpGet("bycategory")]
         public async Task<ActionResult<ServiceResponse<List<IncomesByCategory>>>> GetIncomesByCategory(
             [FromQuery] string date)
         {
@@ -43,42 +43,42 @@ namespace plusminus.Controllers
             return Ok(await _incomesService.GetIncomesByCategory(userId, parsedDate));
         }
 
-        [HttpPost("incomes/add")]
+        [HttpPost("add")]
         public async Task<ActionResult<ServiceResponse<List<GetIncomesDto>>>> AddExpenses(AddIncomesDto newIncomes)
         {
             var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _incomesService.AddIncomes(newIncomes, userId));
         }
 
-        [HttpPatch("incomes/update")]
+        [HttpPatch("update")]
         public async Task<ActionResult<ServiceResponse<GetIncomesDto>>> UpdateExpenses(UpdateIncomesDto updatedIncomes)
         {
             var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _incomesService.UpdateIncomes(updatedIncomes, userId));
         }
 
-        [HttpDelete("incomes/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<ServiceResponse<List<GetIncomesDto>>>> DeleteExpenses(int id)
         {
             var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _incomesService.DeleteIncomesById(id, userId));
         }
 
-        [HttpGet("incomes/sum")]
+        [HttpGet("sum")]
         public async Task<ActionResult<ServiceResponse<GetIncomesThisMonthStat>>> GetIncomesSum()
         {
             var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _incomesService.GetIncomesSum(userId));
         }
         
-        [HttpGet("incomes/dynamicmonth")]
+        [HttpGet("dynamicmonth")]
         public async Task<ActionResult<ServiceResponse<GetThisYearExpenses>>> GetIncomesThisYear()
         {
             var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _incomesService.GetIncomesLastFourMonth(userId));
         }
         
-        [HttpGet("incomes/totalDiff")]
+        [HttpGet("totalDiff")]
         public async Task<ActionResult<ServiceResponse<GetThisYearExpenses>>> GetTotalDiff()
         {
             var userId = (int)HttpContext.Items["UserId"]!;

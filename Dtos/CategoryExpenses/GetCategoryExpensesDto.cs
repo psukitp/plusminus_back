@@ -1,6 +1,6 @@
 ﻿namespace plusminus.Dtos.CategoryExpenses
 {
-    public class GetCategoryExpansesDto
+    public class GetCategoryExpensesDto
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;

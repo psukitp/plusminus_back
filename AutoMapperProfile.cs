@@ -31,9 +31,9 @@ namespace plusminus
             CreateMap<AddCategoryIncomesDto, CategoryIncomes>();
             CreateMap<UpdateCategoryIncomesDto, CategoryIncomes>();
 
-            CreateMap<CategoryExpenses, GetCategoryExpansesDto>();
-            CreateMap<AddCategoryExpansesDto, CategoryExpenses>();
-            CreateMap<UpdateCategoryExpansesDto, CategoryExpenses>();
+            CreateMap<CategoryExpenses, GetCategoryExpensesDto>();
+            CreateMap<AddCategoryExpensesDto, CategoryExpenses>();
+            CreateMap<UpdateCategoryExpensesDto, CategoryExpenses>();
         }
     }
 }

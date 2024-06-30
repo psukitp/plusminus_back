@@ -28,7 +28,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(options =>
         {
-            options.Cookie.Domain = "plusminus-app.ru";
+            //options.Cookie.Domain = "plusminus-app.ru";
             options.Cookie.Name = ".AspNetCore.Cookies";
             options.Cookie.HttpOnly = true; 
             options.ExpireTimeSpan = TimeSpan.FromDays(14); 
@@ -42,7 +42,7 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IExpensesService, ExpensesService>();
 builder.Services.AddScoped<IIncomesService, IncomesService>();
 builder.Services.AddScoped<ICategoryIncomesService, CategoryIncomesService>();
-builder.Services.AddScoped<ICategoryExpansesService, CategoryExpansesService>();
+builder.Services.AddScoped<ICategoryExpensesService, CategoryExpensesService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 
 var app = builder.Build();

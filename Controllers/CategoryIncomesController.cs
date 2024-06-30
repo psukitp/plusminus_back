@@ -25,7 +25,7 @@ namespace plusminus.Controllers
             return Ok(await _categoryIncomesService.GetAllIncomes(userId));
         }
 
-        [HttpPost("category/incomes/add")]
+        [HttpPost("add")]
         public async Task<ActionResult<ServiceResponse<List<GetCategoryIncomesDto>>>> AddCategoryIncomes(
             AddCategoryIncomesDto newCategoryIncomes)
         {
@@ -34,7 +34,7 @@ namespace plusminus.Controllers
         }
 
 
-        [HttpPatch("category/incomes/update")]
+        [HttpPatch("update")]
         public async Task<ActionResult<ServiceResponse<GetCategoryIncomesDto>>> UpdateCategoryIncomes(
             UpdateCategoryIncomesDto updatedCategoryIncomes)
         {
@@ -42,7 +42,7 @@ namespace plusminus.Controllers
             return Ok(await _categoryIncomesService.UpdateCategoryIncomes(updatedCategoryIncomes, userId));
         }
 
-        [HttpDelete("category/incomes/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<ServiceResponse<List<GetCategoryIncomesDto>>>> DeleteCategoryIncomes(int id)
         {
             var userId = (int)HttpContext.Items["UserId"]!;

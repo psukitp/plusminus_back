@@ -86,7 +86,7 @@ namespace plusminus.Services.ExpensesService
             return serviceResponse;
         }
         
-        public async Task<ServiceResponse<List<ExpensesByCategory>>> GetExpansesByCategoryMonth(int userId)
+        public async Task<ServiceResponse<List<ExpensesByCategory>>> GetExpensesByCategoryMonth(int userId)
         {
             var serviceResponse = new ServiceResponse<List<ExpensesByCategory>>();
             try
@@ -132,7 +132,7 @@ namespace plusminus.Services.ExpensesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<List<ExpensesByCategory>>> GetExpansesByCategory(int userId, DateOnly date)
+        public async Task<ServiceResponse<List<ExpensesByCategory>>> GetExpensesByCategory(int userId, DateOnly date)
         {
             var serviceResponse = new ServiceResponse<List<ExpensesByCategory>>();
             try

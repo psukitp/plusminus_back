@@ -19,8 +19,8 @@ namespace plusminus.Controllers
             _expensesService = expensesService;
         }
 
-        [HttpGet("expanses")]
-        public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> GetExpanses([FromQuery] string date)
+        [HttpGet]
+        public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> GetExpenses([FromQuery] string date)
         {
             if (!DateOnly.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedDate))
             {
@@ -31,28 +31,28 @@ namespace plusminus.Controllers
             return Ok(await _expensesService.GetExpensesByUserId(userId, parsedDate));
         }
 
-        [HttpPost("expanses/add")]
+        [HttpPost("add")]
         public async Task<ActionResult<ServiceResponse<List<GetExpensesDto>>>> AddExpenses(AddExpensesDto newExpenses) {
             var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _expensesService.AddExpenses(newExpenses, userId));
         }
 
 
-        [HttpPatch("expanses/update")]
+        [HttpPatch("update")]
         public async Task<ActionResult<ServiceResponse<GetExpensesDto>>> UpdateExpenses(UpdateExpensesDto newExpenses)
         {
             var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _expensesService.UpdateExpenses(newExpenses, userId));
         }
 
-        [HttpDelete("expanses/{id}")]
+        [HttpDelete("{id}")]
         public async Task<ActionResult<ServiceResponse<int>>> DeleteExpenses(int id)
         {
             var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _expensesService.DeleteExpensesById(id, userId));
         }
 
-        [HttpGet("expanses/bycategory")]
+        [HttpGet("bycategory")]
         public async Task<ActionResult<ServiceResponse<List<ExpensesByCategory>>>> GetExpensesByCategory([FromQuery] string date)
         {
             if (!DateOnly.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedDate))
@@ -60,24 +60,24 @@ namespace plusminus.Controllers
                 return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
             }
             var userId = (int)HttpContext.Items["UserId"]!;
-            return Ok(await _expensesService.GetExpansesByCategory(userId, parsedDate));
+            return Ok(await _expensesService.GetExpensesByCategory(userId, parsedDate));
         }
 
-        [HttpGet("expanses/sum")]
+        [HttpGet("sum")]
         public async Task<ActionResult<ServiceResponse<double>>> GetExpensesSum()
         {
             var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _expensesService.GetExpensesSum(userId));
         }
         
-        [HttpGet("expanses/bycategory/month")]
+        [HttpGet("bycategory/month")]
         public async Task<ActionResult<ServiceResponse<List<ExpensesByCategory>>>> GetExpensesByCategoryMonth()
         {
             var userId = (int)HttpContext.Items["UserId"]!;
-            return Ok(await _expensesService.GetExpansesByCategoryMonth(userId));
+            return Ok(await _expensesService.GetExpensesByCategoryMonth(userId));
         }
 
-        [HttpGet("expanses/dynamicmonth")]
+        [HttpGet("dynamicmonth")]
         public async Task<ActionResult<ServiceResponse<GetThisYearExpenses>>> GetExpensesLastFourMonth()
         {
             var userId = (int)HttpContext.Items["UserId"]!;

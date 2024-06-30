@@ -21,7 +21,7 @@ namespace plusminus.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        [HttpPost("users/register")]
+        [HttpPost("register")]
         public async Task<ActionResult<ServiceResponse<UsersRegisterResponse>>> Register(UsersRegisterRequest user)
         {
             var response = await _usersService.Register(user);
@@ -47,7 +47,7 @@ namespace plusminus.Controllers
             return Ok(response);
         }
 
-        [HttpPost("users/auth")]
+        [HttpPost("auth")]
         public async Task<ActionResult<ServiceResponse<UsersAuthenticateResponse>>> Authenticate(UsersAuthenticateRequest user)
         {
             var response = await _usersService.Authenticate(user);
@@ -71,7 +71,7 @@ namespace plusminus.Controllers
             return Ok(response);
         }
 
-        [HttpPost("users/check")]
+        [HttpPost("check")]
         public async Task<ActionResult<ServiceResponse<UsersAuthenticateResponse>>> CheckAuth()
         {
             var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
