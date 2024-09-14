@@ -12,6 +12,6 @@ namespace plusminus.Services.IncomesService
         Task<ServiceResponse<List<IncomesByCategory>>> GetIncomesByCategory(int id, DateOnly date);
         Task<ServiceResponse<GetIncomesThisMonthStat>> GetIncomesSum(int id);
         Task<ServiceResponse<GeThisYearIncomes>> GetIncomesLastFourMonth(int id);
-        Task<ServiceResponse<int>> GetTotalDiff(int userId);
+        Task<ServiceResponse<decimal>> GetTotalDiff(int userId);
     }
 }

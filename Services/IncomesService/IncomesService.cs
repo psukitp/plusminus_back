@@ -198,7 +198,7 @@ namespace plusminus.Services.IncomesService
                 var currentDate = DateTime.Now;
                 GeThisYearIncomes result = new GeThisYearIncomes();
                 result.Monthes = new List<string>();
-                result.Values = new List<double>();
+                result.Values = new List<decimal>();
                 
                 for (var i = 0; i < currentDate.Month; i++)
                 {
@@ -226,9 +226,9 @@ namespace plusminus.Services.IncomesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<int>> GetTotalDiff(int userId)
+        public async Task<ServiceResponse<decimal>> GetTotalDiff(int userId)
         {
-            var serviceResponse = new ServiceResponse<int>();
+            var serviceResponse = new ServiceResponse<decimal>();
             try
             {
                 var incomesSum = _context.Incomes

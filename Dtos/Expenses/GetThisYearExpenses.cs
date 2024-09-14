@@ -3,5 +3,5 @@
 public class GetThisYearExpenses
 {
     public List<string> Monthes { get; set; }
-    public List<double> Values { get; set; }
+    public List<decimal> Values { get; set; }
 }

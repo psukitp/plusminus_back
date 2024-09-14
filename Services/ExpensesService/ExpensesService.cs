@@ -242,7 +242,7 @@ namespace plusminus.Services.ExpensesService
                 var currentDate = DateTime.Now;
                 GetThisYearExpenses result = new GetThisYearExpenses();
                 result.Monthes = new List<string>();
-                result.Values = new List<double>();
+                result.Values = new List<decimal>();
                 
                 for (var i = 0; i < currentDate.Month; i++)
                 {

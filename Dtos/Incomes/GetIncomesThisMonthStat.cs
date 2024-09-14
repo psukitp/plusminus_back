@@ -2,6 +2,6 @@
 
 public class GetIncomesThisMonthStat
 {
-    public double IncomesTotal { get; set; }
-    public double IncomesDiff { get; set; }
+    public decimal IncomesTotal { get; set; }
+    public decimal IncomesDiff { get; set; }
 }

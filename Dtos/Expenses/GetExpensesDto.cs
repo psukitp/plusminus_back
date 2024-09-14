@@ -8,6 +8,6 @@
         public int CategoryId { get; set; }
         public string CategoryName { get; set; } = null!;
         public string CategoryColor { get; set; } = null!;
-        public int Amount { get; set; }
+        public decimal Amount { get; set; }
     }
 }
