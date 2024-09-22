@@ -10,5 +10,6 @@ namespace plusminus.Dtos.Users
         public string Login { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+        public Models.UserSettings Settings { get; set; } = null!;
     }
 }

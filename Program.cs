@@ -7,6 +7,7 @@ using plusminus.Services.CategoryExpansesService;
 using plusminus.Services.CategoryIncomesService;
 using plusminus.Services.ExpensesService;
 using plusminus.Services.IncomesService;
+using plusminus.Services.UserSettingsService;
 using plusminus.Services.UsersService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +23,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.EnableAnnotations();
-    c.SwaggerDoc("v2", new OpenApiInfo { Title = "plusminusApi", Version = "v2" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Plusminus API", Version = "v1" });
 });
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -44,13 +45,17 @@ builder.Services.AddScoped<IIncomesService, IncomesService>();
 builder.Services.AddScoped<ICategoryIncomesService, CategoryIncomesService>();
 builder.Services.AddScoped<ICategoryExpensesService, CategoryExpensesService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<IUserSettingsService, UserSettingsService>();
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(opt =>
+    {
+        opt.SwaggerEndpoint("/swagger/v1/swagger.json", "Plusminus API V1");
+    });
 }
 
 app.UseAuthentication();
@@ -58,7 +63,7 @@ app.UseAuthorization();
 
 app.UseCors(builder =>
 {
-    //TODO �������� ��� ����������, �������� �� ���������� ���������
+    //TODO
     builder.AllowCredentials();
     builder.AllowAnyHeader();
     builder.AllowAnyMethod();

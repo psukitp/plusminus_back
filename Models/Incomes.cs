@@ -8,7 +8,7 @@
         public int CategoryId { get; set; }
         public decimal Amount { get; set; }
 
-        virtual public CategoryIncomes Category { get; set; } = null!;
-        virtual public User User { get; set; } = null!;
+        public virtual CategoryIncomes Category { get; set; } = null!;
+        public virtual User User { get; set; } = null!;
     }
 }

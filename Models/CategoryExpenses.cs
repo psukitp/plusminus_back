@@ -7,7 +7,7 @@
         public string Name { get; set; } = string.Empty;
         public string Color { get; set; } = string.Empty;
 
-        virtual public ICollection<Expenses> Expenses { get; set; } = null!;
-        virtual public User User { get; set; } = null!;
+        public virtual ICollection<Expenses> Expenses { get; set; } = null!;
+        public virtual User User { get; set; } = null!;
     }
 }

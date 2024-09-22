@@ -55,7 +55,7 @@ namespace plusminus.Controllers
             {
                 var userClaims = new List<Claim>
                 {
-                    new Claim("id", response.Data.Id.ToString()),
+                    new("id", response.Data.Id.ToString()),
                 };
 
                 var claimsIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);

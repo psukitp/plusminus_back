@@ -28,7 +28,7 @@ namespace plusminus.Services.UsersService
             var serviceResponse = new ServiceResponse<UsersAuthenticateResponse>();
             try
             {
-                var dbUser = await _context.Users.FirstOrDefaultAsync(u => u.Login == user.Login);
+                var dbUser = await _context.Users.Include(u => u.Settings).FirstOrDefaultAsync(u => u.Login == user.Login);
 
                 if (dbUser == null) throw new Exception("Введен неправильный логин или пароль");
                 if (!BCrypt.Net.BCrypt.Verify(user.Password, dbUser.PasswordHash)) throw new Exception("Введен неправильный логин или пароль");
@@ -41,7 +41,8 @@ namespace plusminus.Services.UsersService
                     Login = dbUser.Login,
                     Name = dbUser.Name,
                     Phone = dbUser.Phone,
-                    SecondName = dbUser.SecondName
+                    SecondName = dbUser.SecondName,
+                    Settings = dbUser.Settings
                 };
 
             }
@@ -59,7 +60,7 @@ namespace plusminus.Services.UsersService
             var serviceResponse = new ServiceResponse<UsersAuthenticateResponse>();
             try
             {
-                var dbUser = await _context.Users.FindAsync(userId);
+                var dbUser = await _context.Users.Include(u => u.Settings).FirstOrDefaultAsync(u => u.Id == userId);
                 if (dbUser == null) throw new Exception("Введен неправильный логин или пароль");
 
                 serviceResponse.Data = new UsersAuthenticateResponse
@@ -69,7 +70,8 @@ namespace plusminus.Services.UsersService
                     Login = dbUser.Login,
                     Name = dbUser.Name,
                     Phone = dbUser.Phone,
-                    SecondName = dbUser.SecondName
+                    SecondName = dbUser.SecondName,
+                    Settings = dbUser.Settings
                 };
             }
             catch (Exception ex)

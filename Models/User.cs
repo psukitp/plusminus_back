@@ -9,7 +9,8 @@
         public string Phone { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
-        virtual public ICollection<Expenses> Expenses { get; set; } = null!;
-        virtual public ICollection<Incomes> Incomes { get; set; } = null!;
+        public virtual ICollection<Expenses> Expenses { get; set; } = null!;
+        public virtual ICollection<Incomes> Incomes { get; set; } = null!;
+        public virtual UserSettings Settings { get; set; } = null!;
     }
 }

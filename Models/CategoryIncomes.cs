@@ -7,7 +7,7 @@
         public int UserId { get; set; }
         public string Color { get; set; } = string.Empty;
 
-        virtual public ICollection<Incomes> Incomes { get; set; } = null!;
-        virtual public User User { get; set; } = null!;
+        public virtual ICollection<Incomes> Incomes { get; set; } = null!;
+        public virtual User User { get; set; } = null!;
     }
 }
