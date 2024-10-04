@@ -29,7 +29,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(options =>
         {
-            options.Cookie.Domain = builder.Environment.IsDevelopment() ? null : "plusminus-app.ru";
+            //options.Cookie.Domain = builder.Environment.IsDevelopment() ? null : "plusminus-app.ru";
             options.Cookie.Name = ".AspNetCore.Cookies";
             options.Cookie.HttpOnly = true; 
             options.ExpireTimeSpan = TimeSpan.FromDays(14); 
@@ -67,14 +67,7 @@ app.UseCors(appBuilder =>
     appBuilder.AllowCredentials();
     appBuilder.AllowAnyHeader();
     appBuilder.AllowAnyMethod();
-    appBuilder.SetIsOriginAllowed(origin =>
-    {
-        if (app.Environment.IsDevelopment())
-        {
-            return true;
-        }
-        return origin == "https://plusminus-app.ru";
-    });
+    appBuilder.SetIsOriginAllowed(origin => true);
 });
 
 app.UseHttpsRedirection();
