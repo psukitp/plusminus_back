@@ -83,5 +83,41 @@ namespace plusminus.Controllers
 
             return Ok(await _usersService.CheckAuth(userId));
         }
+        
+        [HttpPost("getRestoreCode")]
+        public async Task<ActionResult<ServiceResponse<dynamic>>> GetRestoreCode(RestoreRequest data)
+        {
+            return Ok(await _usersService.GetRestoreCode(data.Email));
+        }
+        
+        [HttpPost("applyCode")]
+        public async Task<ActionResult<ServiceResponse<dynamic>>> ApplyRestoreCode(ApplyRestoreRequest data)
+        {
+            return Ok(await _usersService.ApplyRestoreCode(data.Code));
+        }
+        
+        [HttpPost("setPass")]
+        public async Task<ActionResult<ServiceResponse<UsersAuthenticateResponse>>> SetNewPassword(SetPsswordRequest data)
+        {
+            var response = await _usersService.SetNewPassword(data.Password);
+            if (response.Success && response.Data != null)
+            {
+                var userClaims = new List<Claim>
+                {
+                    new("id", response.Data.Id.ToString()),
+                };
+
+                var claimsIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var authProperties = new AuthenticationProperties
+                {
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(14),
+                    IsPersistent = true,
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+            }
+            return Ok(response);
+        }
     }
 }

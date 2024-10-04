@@ -29,7 +29,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
         .AddCookie(options =>
         {
-            //options.Cookie.Domain = "plusminus-app.ru";
+            options.Cookie.Domain = builder.Environment.IsDevelopment() ? null : "plusminus-app.ru";
             options.Cookie.Name = ".AspNetCore.Cookies";
             options.Cookie.HttpOnly = true; 
             options.ExpireTimeSpan = TimeSpan.FromDays(14); 
@@ -46,6 +46,7 @@ builder.Services.AddScoped<ICategoryIncomesService, CategoryIncomesService>();
 builder.Services.AddScoped<ICategoryExpensesService, CategoryExpensesService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IUserSettingsService, UserSettingsService>();
+builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
@@ -61,13 +62,19 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors(builder =>
+app.UseCors(appBuilder =>
 {
-    //TODO
-    builder.AllowCredentials();
-    builder.AllowAnyHeader();
-    builder.AllowAnyMethod();
-    builder.SetIsOriginAllowed(origin => true) ;
+    appBuilder.AllowCredentials();
+    appBuilder.AllowAnyHeader();
+    appBuilder.AllowAnyMethod();
+    appBuilder.SetIsOriginAllowed(origin =>
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            return true;
+        }
+        return origin == "https://plusminus-app.ru";
+    });
 });
 
 app.UseHttpsRedirection();
