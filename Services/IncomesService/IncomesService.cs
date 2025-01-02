@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using plusminus.Data;
@@ -75,11 +76,10 @@ namespace plusminus.Services.IncomesService
             var serviceResponse = new ServiceResponse<List<GetIncomesDto>>();
             try
             {
-                var dbIncomes = await _context.Incomes.Include(i => i.Category).ToListAsync();
-                var incomes = dbIncomes.Where(i => i.UserId == id && i.Date == date);
-                if (incomes is null) throw new Exception("У вас нет таких доходов");
-
-                serviceResponse.Data = incomes.Select(_mapper.Map<Incomes, GetIncomesDto>).ToList();
+                var firstDate = DateOnly.FromDateTime(DateTime.Now.AddMonths(-1));
+                var incomes = await _context.Incomes.Include(i => i.Category).ToListAsync();
+                var dbIncomes = incomes.Where(i => i.UserId == id && i.Date <= date && i.Date >= firstDate);
+                serviceResponse.Data = dbIncomes.Select(_mapper.Map<Incomes, GetIncomesDto>).ToList();
             }
             catch (Exception ex)
             {
@@ -159,24 +159,18 @@ namespace plusminus.Services.IncomesService
             return serviceResponse;
         }
         
-        public async Task<ServiceResponse<GetIncomesThisMonthStat>> GetIncomesSum(int id)
+        public async Task<ServiceResponse<GetIncomesThisMonthStat>> GetIncomesSum(int id, DateOnly from, DateOnly to)
         {
             var serviceResponse = new ServiceResponse<GetIncomesThisMonthStat>();
             try
             {
-                var currentDate = DateTime.Now;
                 var incomesThisMonth = await _context.Incomes
-                    .Where(i => i.Date.Month == currentDate.Month && i.Date.Year == currentDate.Year && i.UserId == id)
-                    .SumAsync(i => i.Amount);
-
-                var prevDate = currentDate.AddMonths(-1);
-                var incomesPrevMonth = await _context.Incomes
-                    .Where(i => i.Date.Month == prevDate.Month && i.Date.Year == prevDate.Year && i.UserId == id)
+                    .Where(i => i.UserId == id)
+                    .Where(i => i.Date <= to && i.Date >= from)
                     .SumAsync(i => i.Amount);
 
                 GetIncomesThisMonthStat result = new GetIncomesThisMonthStat
                 {
-                    IncomesDiff = incomesThisMonth - incomesPrevMonth,
                     IncomesTotal = incomesThisMonth
                 };
                 serviceResponse.Data = result;
@@ -225,7 +219,7 @@ namespace plusminus.Services.IncomesService
 
             return serviceResponse;
         }
-
+        
         public async Task<ServiceResponse<decimal>> GetTotalDiff(int userId)
         {
             var serviceResponse = new ServiceResponse<decimal>();
@@ -246,6 +240,49 @@ namespace plusminus.Services.IncomesService
                 serviceResponse.Success = false;
                 serviceResponse.Message = ex.Message;
             }
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetIncomesByPeriod>> GetIncomesByPeriod(int userId, DateOnly from,
+            DateOnly to)
+        {
+            var serviceResponse = new ServiceResponse<GetIncomesByPeriod>();
+            try
+            {
+                var result = new GetIncomesByPeriod
+                {
+                    Days = new List<DateOnly>(),
+                    Values = new List<decimal>()
+                };
+                
+                var incomes = await _context.Incomes
+                    .Where(e => e.UserId == userId && e.Date >= from && e.Date <= to)
+                    .GroupBy(e => e.Date)
+                    .Select(g => new
+                    {
+                        Date = g.Key,
+                        Total = g.Sum(e => e.Amount)
+                    })
+                    .ToListAsync();
+
+                var daysBetweenDates = to.DayNumber - from.DayNumber;
+
+                for (int i = 0; i <= daysBetweenDates; i++)
+                {
+                    var currentDate = from.AddDays(i);
+                    var currentIncome = incomes.Where(income => income.Date == currentDate).ToArray();
+                    result.Days.Add(currentIncome.Length > 0 ? currentIncome[0].Date : currentDate);
+                    result.Values.Add(currentIncome.Length > 0 ? currentIncome[0].Total : 0);
+                }
+
+                serviceResponse.Data = result;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
             return serviceResponse;
         }
     }

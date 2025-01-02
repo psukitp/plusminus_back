@@ -70,11 +70,19 @@ namespace plusminus.Controllers
             return Ok(await _expensesService.GetExpensesSum(userId));
         }
         
-        [HttpGet("bycategory/month")]
-        public async Task<ActionResult<ServiceResponse<List<ExpensesByCategory>>>> GetExpensesByCategoryMonth()
+        [HttpGet("bycategory/period")]
+        public async Task<ActionResult<ServiceResponse<List<ExpensesByCategory>>>> GetExpensesByCategoryMonth([FromQuery] string from,[FromQuery] string to)
         {
             var userId = (int)HttpContext.Items["UserId"]!;
-            return Ok(await _expensesService.GetExpensesByCategoryMonth(userId));
+            if (!DateOnly.TryParseExact(from, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedFrom))
+            {
+                return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
+            }
+            if (!DateOnly.TryParseExact(to, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedTo))
+            {
+                return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
+            }
+            return Ok(await _expensesService.GetExpensesByCategoryMonth(userId, parsedFrom, parsedTo));
         }
 
         [HttpGet("dynamicmonth")]
@@ -82,6 +90,17 @@ namespace plusminus.Controllers
         {
             var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _expensesService.GetExpensesThisYear(userId));
+        }
+        
+        [HttpGet("lastWeek")]
+        public async Task<ActionResult<ServiceResponse<GetLastWeekExpenses>>> GetLastWeekExpenses([FromQuery] string date)
+        {
+            if (!DateOnly.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedDate))
+            {
+                return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
+            }
+            var userId = (int)HttpContext.Items["UserId"]!;
+            return Ok(await _expensesService.GetLastWeekExpenses(userId, parsedDate));
         }
     }
 }

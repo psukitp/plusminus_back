@@ -24,8 +24,9 @@ namespace plusminus.Services.ExpensesService
 
             try
             {
+                var firstDate = date.AddDays(-7);
                 var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
-                var dbExpenses = expenses.Where(e => e.UserId == id && e.Date == date);
+                var dbExpenses = expenses.Where(e => e.UserId == id && e.Date >= firstDate && e.Date <= date);
                 serviceResponse.Data = dbExpenses.Select(e => _mapper.Map<GetExpensesDto>(e)).ToList();
             }
             catch (Exception ex)
@@ -57,7 +58,7 @@ namespace plusminus.Services.ExpensesService
             await _context.SaveChangesAsync();
 
             var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
-            var dbExpenses = expenses.Where(e => e.UserId == userId && e.Date == expensesToAdd.Date);
+            var dbExpenses = expenses.Where(e => e.Id == addedExpenses.Entity.Id);
             serviceResponse.Data = dbExpenses.Select(e => _mapper.Map<GetExpensesDto>(e)).ToList();
             
             return serviceResponse;
@@ -86,17 +87,16 @@ namespace plusminus.Services.ExpensesService
             return serviceResponse;
         }
         
-        public async Task<ServiceResponse<List<ExpensesByCategory>>> GetExpensesByCategoryMonth(int userId)
+        public async Task<ServiceResponse<List<ExpensesByCategory>>> GetExpensesByCategoryMonth(int userId, DateOnly from, DateOnly to)
         {
             var serviceResponse = new ServiceResponse<List<ExpensesByCategory>>();
             try
             {
-                var currentMonth = DateTime.Now.Month;
-                var currentYear = DateTime.Now.Year;
                 var expenses = await _context.Expenses.Include(e => e.Category).ToListAsync();
 
                 var dbExpenses = expenses
-                    .Where(e => e.UserId == userId && e.Date.Month == currentMonth && e.Date.Year == currentYear)
+                    .Where(e => e.UserId == userId)
+                    .Where(e => e.Date >= from && e.Date <= to)
                     .GroupBy(e => e.CategoryId)
                     .Select(g => new
                     {
@@ -270,5 +270,46 @@ namespace plusminus.Services.ExpensesService
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<GetLastWeekExpenses>> GetLastWeekExpenses(int userId, DateOnly date)
+        {
+            var serviceResponse = new ServiceResponse<GetLastWeekExpenses>();
+            try
+            {
+                var firstDate = date.AddDays(-7);
+                
+                var result = new GetLastWeekExpenses
+                {
+                    Days = new List<DateOnly>(),
+                    Values = new List<decimal>()
+                };
+                
+                var expenses = await _context.Expenses
+                    .Where(e => e.UserId == userId && e.Date >= firstDate && e.Date <= date)
+                    .GroupBy(e => e.Date)
+                    .Select(g => new
+                    {
+                        Date = g.Key,
+                        Total = g.Sum(e => e.Amount)
+                    })
+                    .ToListAsync();
+                
+                for (int i = 1; i < 8; i++)
+                {
+                    var currentDate = firstDate.AddDays(i);
+                    result.Days.Add(currentDate);
+                    var dailyExpense = expenses.FirstOrDefault(e => e.Date == currentDate)?.Total ?? 0;
+                    result.Values.Add(dailyExpense);
+                }
+
+                serviceResponse.Data = result;
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return serviceResponse;
+        }
     }
 }

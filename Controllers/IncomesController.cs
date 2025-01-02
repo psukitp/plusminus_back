@@ -65,10 +65,18 @@ namespace plusminus.Controllers
         }
 
         [HttpGet("sum")]
-        public async Task<ActionResult<ServiceResponse<GetIncomesThisMonthStat>>> GetIncomesSum()
+        public async Task<ActionResult<ServiceResponse<GetIncomesThisMonthStat>>> GetIncomesSum([FromQuery] string from,[FromQuery] string to)
         {
+            if (!DateOnly.TryParseExact(from, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedFrom))
+            {
+                return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
+            }
+            if (!DateOnly.TryParseExact(to, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedTo))
+            {
+                return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
+            }
             var userId = (int)HttpContext.Items["UserId"]!;
-            return Ok(await _incomesService.GetIncomesSum(userId));
+            return Ok(await _incomesService.GetIncomesSum(userId, parsedFrom, parsedTo));
         }
         
         [HttpGet("dynamicmonth")]
@@ -83,6 +91,21 @@ namespace plusminus.Controllers
         {
             var userId = (int)HttpContext.Items["UserId"]!;
             return Ok(await _incomesService.GetTotalDiff(userId));
+        }
+
+        [HttpGet("period")]
+        public async Task<ActionResult<ServiceResponse<GetIncomesByPeriod>>> GetIncomesByPeriod([FromQuery] string from,[FromQuery] string to)
+        {
+            if (!DateOnly.TryParseExact(from, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedFrom))
+            {
+                return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
+            }
+            if (!DateOnly.TryParseExact(to, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedTo))
+            {
+                return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
+            }
+            var userId = (int)HttpContext.Items["UserId"]!;
+            return Ok(await _incomesService.GetIncomesByPeriod(userId, parsedFrom, parsedTo));
         }
     }
 }

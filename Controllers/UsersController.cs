@@ -83,6 +83,12 @@ namespace plusminus.Controllers
 
             return Ok(await _usersService.CheckAuth(userId));
         }
+
+        [HttpPost("logout")]
+        public async Task Logout()
+        { 
+            await HttpContext.SignOutAsync();
+        }
         
         [HttpPost("getRestoreCode")]
         public async Task<ActionResult<ServiceResponse<dynamic>>> GetRestoreCode(RestoreRequest data)

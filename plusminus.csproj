@@ -26,8 +26,4 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.4.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Remove="Utils\credentials.json" />
-  </ItemGroup>
-
 </Project>

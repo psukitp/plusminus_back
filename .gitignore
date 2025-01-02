@@ -331,3 +331,8 @@ ASALocalRun/
 
 bin/
 obj/
+
+credentials.json
+
+.appsettings.json
+.appsettings.Development.json
