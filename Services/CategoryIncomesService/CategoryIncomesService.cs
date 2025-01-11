@@ -106,7 +106,7 @@ namespace plusminus.Services.CategoryIncomesService
             {
                 new()
                 {
-                    Color = "rgb(178, 44, 203)",
+                    Color = "rgb(224,90,41)",
                     Name = "Работа"
                 }
             };

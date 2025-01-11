@@ -113,6 +113,7 @@ namespace plusminus.Services.ExpensesService
                     {
                         result.Add(new ExpensesByCategory
                         {
+                            Id = category.Id,
                             CategoryName = category.Name,
                             Color = category.Color,
                             Amount = expense.amount
@@ -244,7 +245,7 @@ namespace plusminus.Services.ExpensesService
                 result.Monthes = new List<string>();
                 result.Values = new List<decimal>();
                 
-                for (var i = 0; i < currentDate.Month; i++)
+                for (var i = 0; i < 12; i++)
                 {
                     var month = currentDate.AddMonths(-i);
                     var monthExpenses = await _context.Expenses

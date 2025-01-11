@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+﻿using System.Globalization;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using plusminus.Data;
@@ -184,7 +183,7 @@ namespace plusminus.Services.IncomesService
             return serviceResponse;
         }
         
-        public async Task<ServiceResponse<GeThisYearIncomes>> GetIncomesLastFourMonth(int id)
+        public async Task<ServiceResponse<GeThisYearIncomes>> GetIncomesThisYear(int id)
         {
             var serviceResponse = new ServiceResponse<GeThisYearIncomes>();
             try
@@ -194,7 +193,7 @@ namespace plusminus.Services.IncomesService
                 result.Monthes = new List<string>();
                 result.Values = new List<decimal>();
                 
-                for (var i = 0; i < currentDate.Month; i++)
+                for (var i = 0; i < 12; i++)
                 {
                     var month = currentDate.AddMonths(-i);
                     var monthIncomes = await _context.Incomes

@@ -105,22 +105,22 @@ namespace plusminus.Services.CategoryExpansesService
             {
                 new()
                 {
-                    Color = "rgb(51, 102, 255)",
+                    Color = "rgb(224,90,41)",
                     Name = "Продукты"
                 },
                 new()
                 {
-                    Color = "rgb(255, 51, 112)",
+                    Color = "rgb(64,141,248)",
                     Name = "Транспорт"
                 },
                 new()
                 {
-                    Color = "rgb(5, 255, 0)",
+                    Color = "rgb(118,75,59)",
                     Name = "Развлечения"
                 },
                 new()
                 {
-                    Color = "rgb(255, 96, 0)",
+                    Color = "rgb(193,200,210)",
                     Name = "Подписки"
                 }
             };

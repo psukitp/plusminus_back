@@ -83,7 +83,7 @@ namespace plusminus.Controllers
         public async Task<ActionResult<ServiceResponse<GetThisYearExpenses>>> GetIncomesThisYear()
         {
             var userId = (int)HttpContext.Items["UserId"]!;
-            return Ok(await _incomesService.GetIncomesLastFourMonth(userId));
+            return Ok(await _incomesService.GetIncomesThisYear(userId));
         }
         
         [HttpGet("totalDiff")]
