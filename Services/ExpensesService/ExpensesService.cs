@@ -204,25 +204,28 @@ namespace plusminus.Services.ExpensesService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<ExpensesThisMonthStat>> GetExpensesSum(int id)
+        public async Task<ServiceResponse<ExpensesThisMonthStat>> GetExpensesSum(int id, DateOnly from, DateOnly to)
         {
             var serviceResponse = new ServiceResponse<ExpensesThisMonthStat>();
             try
             {
-                var currentDate = DateTime.Now;
-                var expensesThisMonth = await _context.Expenses
-                    .Where(e => e.Date.Month == currentDate.Month && e.Date.Year == currentDate.Year && e.UserId == id)
-                    .SumAsync(e => e.Amount);
+                var expensesThisPeriod = await _context.Expenses
+                    .Where(i => i.UserId == id)
+                    .Where(i => i.Date <= to && i.Date >= from)
+                    .SumAsync(i => i.Amount);;
 
-                var prevDate = currentDate.AddMonths(-1);
-                var expensesPrevMonth = await _context.Expenses
-                    .Where(e => e.Date.Month == prevDate.Month && e.Date.Year == prevDate.Year && e.UserId == id)
-                    .SumAsync(e => e.Amount);
+                var dayDiff = to.DayNumber - from.DayNumber;
+                var prevFrom = from.AddDays(-dayDiff);
+                
+                var expensesPrevPeriod = await _context.Expenses
+                    .Where(i => i.UserId == id)
+                    .Where(i => i.Date < from && i.Date >= prevFrom)
+                    .SumAsync(i => i.Amount);;
 
                 ExpensesThisMonthStat result = new ExpensesThisMonthStat
                 {
-                    ExpensesDiff = expensesThisMonth - expensesPrevMonth,
-                    ExpensesTotal = expensesThisMonth
+                    ExpensesDiff = expensesThisPeriod - expensesPrevPeriod,
+                    ExpensesTotal = expensesThisPeriod
                 };
                 serviceResponse.Data = result;
             }
