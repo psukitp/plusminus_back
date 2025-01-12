@@ -163,14 +163,24 @@ namespace plusminus.Services.IncomesService
             var serviceResponse = new ServiceResponse<GetIncomesThisMonthStat>();
             try
             {
-                var incomesThisMonth = await _context.Incomes
+                var incomesThisPeriod = await _context.Incomes
                     .Where(i => i.UserId == id)
                     .Where(i => i.Date <= to && i.Date >= from)
                     .SumAsync(i => i.Amount);
+                
+                var dayDiff = to.DayNumber - from.DayNumber;
+                var prevFrom = from.AddDays(-dayDiff);
+                
+                var incomesPrevPeriod = await _context.Incomes
+                    .Where(i => i.UserId == id)
+                    .Where(i => i.Date < from && i.Date >= prevFrom)
+                    .SumAsync(i => i.Amount);;
+
 
                 GetIncomesThisMonthStat result = new GetIncomesThisMonthStat
                 {
-                    IncomesTotal = incomesThisMonth
+                    IncomesDiff = incomesThisPeriod - incomesPrevPeriod,
+                    IncomesTotal = incomesThisPeriod
                 };
                 serviceResponse.Data = result;
             }

@@ -64,10 +64,18 @@ namespace plusminus.Controllers
         }
 
         [HttpGet("sum")]
-        public async Task<ActionResult<ServiceResponse<double>>> GetExpensesSum()
+        public async Task<ActionResult<ServiceResponse<double>>> GetExpensesSum([FromQuery] string from,[FromQuery] string to)
         {
+            if (!DateOnly.TryParseExact(from, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedFrom))
+            {
+                return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
+            }
+            if (!DateOnly.TryParseExact(to, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly parsedTo))
+            {
+                return BadRequest("Неверный формат даты. Используйте формат yyyy-MM-dd.");
+            }
             var userId = (int)HttpContext.Items["UserId"]!;
-            return Ok(await _expensesService.GetExpensesSum(userId));
+            return Ok(await _expensesService.GetExpensesSum(userId, parsedFrom, parsedTo));
         }
         
         [HttpGet("bycategory/period")]
